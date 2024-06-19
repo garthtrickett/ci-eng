@@ -20,6 +20,9 @@ export const tokensTable = pgTable('tokens', {
 	...timestamps
 });
 
-export const tokensRealations = relations(tokensTable, ({ one }) => ({
-	user: one(usersTable)
+export const tokensRelations = relations(tokensTable, ({ one }) => ({
+	user: one(usersTable, {
+		fields: [tokensTable.userId],
+		references: [usersTable.id]
+	})
 }));
