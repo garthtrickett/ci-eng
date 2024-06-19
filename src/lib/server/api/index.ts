@@ -5,6 +5,7 @@ import { hc } from 'hono/client';
 import { container } from 'tsyringe';
 import { processAuth } from './middleware/process-auth.middleware';
 import { IamController } from './controllers/iam.controller';
+import { TasksController } from './controllers/tasks.controller';
 import { config } from './common/config';
 
 /* -------------------------------------------------------------------------- */
@@ -35,10 +36,7 @@ app.use(processAuth);
 /* --------------------------------- Routes --------------------------------- */
 const routes = app
 	.route('/iam', container.resolve(IamController).routes())
-	.route('/iam', container.resolve(IamController).routes())
-	.route('/iam', container.resolve(IamController).routes())
-	.route('/iam', container.resolve(IamController).routes())
-	.route('/iam', container.resolve(IamController).routes());
+	.route('/tasks', container.resolve(TasksController).routes());
 
 /* -------------------------------------------------------------------------- */
 /*                                   Exports                                  */

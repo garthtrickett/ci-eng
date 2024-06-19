@@ -8,6 +8,13 @@
       "when": 1716599372513,
       "tag": "0000_first_crystal",
       "breakpoints": false
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1718795731345,
+      "tag": "0001_unique_rogue",
+      "breakpoints": false
     }
   ]
 }
