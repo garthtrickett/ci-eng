@@ -9,12 +9,12 @@ import { tasksTable } from '../infrastructure/database/tables/tasks.table';
 /* -------------------------------------------------------------------------- */
 /* ---------------------------------- About --------------------------------- */
 /*
-Repositories are the layer that interacts with the database. They are responsible for retrieving and 
+Repositories are the layer that interacts with the database. They are responsible for retrieving and
 storing data. They should not contain any business logic, only database queries.
 */
 /* ---------------------------------- Notes --------------------------------- */
 /*
- Repositories should only contain methods for CRUD operations and any other database interactions. 
+ Repositories should only contain methods for CRUD operations and any other database interactions.
  Any complex logic should be delegated to a service. If a repository method requires a transaction,
  it should be passed in as an argument or the class should have a method to set the transaction.
  In our case the method 'trxHost' is used to set the transaction context.
@@ -29,6 +29,14 @@ export class TasksRepository implements Repository {
 
 	async findAll() {
 		return await this.db.query.tasksTable.findMany();
+	}
+
+	async create(name: string) {
+		const newTask: CreateTask = {
+			name: name,
+			done: false
+		};
+		return await this.db.insert(tasksTable).values(newTask).returning();
 	}
 
 	trxHost(trx: DatabaseProvider) {
