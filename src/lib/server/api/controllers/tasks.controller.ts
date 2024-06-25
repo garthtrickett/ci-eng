@@ -5,6 +5,7 @@ import { Hono } from 'hono';
 import type { HonoTypes } from '../types';
 import type { Controller } from '../interfaces/controller.interface';
 import { createTaskDto } from '../dtos/create-task.dto';
+import { createTask } from '../tasks/endpoints/createTasks';
 
 /* -------------------------------------------------------------------------- */
 /*                                 Controller                                 */
@@ -36,17 +37,12 @@ export class TasksController implements Controller {
 	constructor(@inject(TasksService) private tasksService: TasksService) {}
 
 	routes() {
-		return this.controller
-			.get('/', async (c) => {
-				const tasks = await this.tasksService.dbFindAllTasks();
-				console.log('tasks', tasks);
-				return c.json({ tasks: tasks });
-			})
-			.post('/', zValidator('json', createTaskDto), async (c) => {
-				const body = c.req.valid('json');
-				const newTask = await this.tasksService.dbCreateTask(body.name);
-				console.log(newTask);
-				return c.json(newTask);
-			});
+		// .get('/', async (c) => {
+		// 	const tasks = await this.tasksService.dbFindAllTasks();
+		// 	console.log('tasks', tasks);
+		// 	return c.json({ tasks: tasks });
+		createTask(this.controller, '/');
+
+		return this.controller;
 	}
 }

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-
+import { insertTaskSchema } from '../infrastructure/database/tables/tasks.table';
 /* -------------------------------------------------------------------------- */
 /*                                     DTO                                    */
 /* -------------------------------------------------------------------------- */
@@ -18,8 +18,5 @@ ensure that the correct data is being passed around.
 */
 /* -------------------------------------------------------------------------- */
 
-export const createTaskDto = z.object({
-	name: z.string()
-});
-
-export type createTaskDto = z.infer<typeof createTaskDto>;
+export const createTaskDto = insertTaskSchema.pick({ name: true });
+export type CreateTaskDto = z.infer<typeof createTaskDto>;
