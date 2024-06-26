@@ -1,12 +1,12 @@
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
-import { tasksTable } from '../../infrastructure/database/tables/tasks.table'; // Import your db instance
-import { db } from '../../infrastructure/database';
+import { tasksTable } from '../infrastructure/database/tables/tasks.table'; // Import your db instance
+import { db } from '../infrastructure/database';
 import { z } from 'zod';
-import { insertTaskSchema } from '../../infrastructure/database/tables/tasks.table';
-import { type CreateTask } from '../../infrastructure/database/tables/tasks.table';
+import { insertTaskSchema } from '../infrastructure/database/tables/tasks.table';
+import { type CreateTask } from '../infrastructure/database/tables/tasks.table';
 
-import type { HonoTypes } from '../../types';
+import type { HonoTypes } from '../types';
 
 export function createTask(honoController: Hono<HonoTypes>, path: string) {
 	const createTaskDto = insertTaskSchema.pick({ name: true });

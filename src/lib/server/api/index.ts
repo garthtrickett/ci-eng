@@ -5,10 +5,11 @@ import type { HonoTypes } from './types';
 import { hc } from 'hono/client';
 import { container } from 'tsyringe';
 import { processAuth } from './middleware/process-auth.middleware';
-import { IamController } from './controllers/iam.controller';
-import { TasksController } from './controllers/tasks.controller';
+import { IamController } from '$lib/server/api/controllers/iam.controller';
 import { config } from './common/config';
-import { createTask } from './tasks/endpoints/createTasks';
+import { finishTask } from './endpoints/finishTask';
+import { undoFinishTask } from './endpoints/undoFinishTask';
+import { createTask } from './endpoints/createTasks';
 import type { Controller } from './interfaces/controller.interface';
 
 /* -------------------------------------------------------------------------- */
@@ -41,10 +42,8 @@ app.use(processAuth);
 export class RouteController implements Controller {
 	controller = new Hono<HonoTypes>();
 	routes() {
-		// .get('/', async (c) => {
-		// 	const tasks = await this.tasksService.dbFindAllTasks();
-		// 	console.log('tasks', tasks);
-		// 	return c.json({ tasks: tasks });
+		finishTask(this.controller, '/tasks/:id/finish');
+		undoFinishTask(this.controller, '/tasks/:id/undo-finish');
 		createTask(this.controller, '/tasks');
 
 		return this.controller;
