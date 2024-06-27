@@ -9,8 +9,12 @@ import { IamController } from '$lib/server/api/controllers/iam.controller';
 import { config } from './common/config';
 import { finishTask } from './endpoints/finishTask';
 import { undoFinishTask } from './endpoints/undoFinishTask';
-import { createTask } from './endpoints/createTasks';
+import { createTask } from './endpoints/createTask';
+import { getTasks } from './endpoints/getTasks';
+import { deleteTask } from './endpoints/deleteTask';
+import { getAuthedUser } from './endpoints/getAuthedUser';
 import type { Controller } from './interfaces/controller.interface';
+import { registerEmail } from './endpoints/registerEmail';
 
 /* -------------------------------------------------------------------------- */
 /*                               Client Request                               */
@@ -42,9 +46,14 @@ app.use(processAuth);
 export class RouteController implements Controller {
 	controller = new Hono<HonoTypes>();
 	routes() {
+		createTask(this.controller, '/tasks');
+		getTasks(this.controller, '/tasks');
 		finishTask(this.controller, '/tasks/:id/finish');
 		undoFinishTask(this.controller, '/tasks/:id/undo-finish');
-		createTask(this.controller, '/tasks');
+		deleteTask(this.controller, '/tasks/:id/delete');
+
+		getAuthedUser(this.controller, '/user');
+		registerEmail(this.controller, '/email/register');
 
 		return this.controller;
 	}

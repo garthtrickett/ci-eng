@@ -12,7 +12,7 @@ export function undoFinishTask(honoController: Hono<HonoTypes>, path: string) {
 	const taskParam = insertTaskSchema.pick({ id: true });
 	type TaskParam = z.infer<typeof taskParam>;
 
-	return honoController.post(path, zValidator('param', taskParam), async (c) => {
+	return honoController.patch(path, zValidator('param', taskParam), async (c) => {
 		const { id } = c.req.valid('param');
 
 		if (typeof id !== 'string') {
