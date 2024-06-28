@@ -13,9 +13,11 @@ import { createTask } from './endpoints/createTask';
 import { getTasks } from './endpoints/getTasks';
 import { deleteTask } from './endpoints/deleteTask';
 import { getAuthedUser } from './endpoints/getAuthedUser';
+import { signInEmail } from './endpoints/signInEmail';
 import type { Controller } from './interfaces/controller.interface';
 import { registerEmail } from './endpoints/registerEmail';
-
+import { inject, injectable } from 'tsyringe';
+import { LuciaProvider } from './providers/lucia.provider';
 /* -------------------------------------------------------------------------- */
 /*                               Client Request                               */
 /* ------------------------------------ ▲ ----------------------------------- */
@@ -43,7 +45,11 @@ app.use(processAuth);
 
 /* --------------------------------- Routes --------------------------------- */
 
+@injectable()
 export class RouteController implements Controller {
+	// Make Lucia available here then pass in
+	constructor(@inject(LuciaProvider) private lucia: LuciaProvider) {}
+
 	controller = new Hono<HonoTypes>();
 	routes() {
 		createTask(this.controller, '/tasks');
@@ -53,6 +59,7 @@ export class RouteController implements Controller {
 		deleteTask(this.controller, '/tasks/:id/delete');
 		getAuthedUser(this.controller, '/user');
 		registerEmail(this.controller, '/email/register');
+		signInEmail(this.controller, '/email/signin', this.lucia);
 
 		return this.controller;
 	}

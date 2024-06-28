@@ -21,7 +21,7 @@ export function registerEmail(honoController: Hono<HonoTypes>, path: string) {
 
 	type RegisterEmailDto = z.infer<typeof registerEmailDto>;
 
-	return honoController.post('/email/register', zValidator('json', registerEmailDto), async (c) => {
+	return honoController.post(path, zValidator('json', registerEmailDto), async (c) => {
 		const { email } = c.req.valid('json');
 
 		const existingUser = await db.query.usersTable.findFirst({
