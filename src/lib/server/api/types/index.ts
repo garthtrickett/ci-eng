@@ -6,3 +6,8 @@ export type HonoTypes = {
 		user: User | null;
 	};
 };
+
+export type SendTemplate<T> = {
+	to: string | string[];
+	props: T;
+};

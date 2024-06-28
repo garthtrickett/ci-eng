@@ -51,7 +51,6 @@ export class RouteController implements Controller {
 		finishTask(this.controller, '/tasks/:id/finish');
 		undoFinishTask(this.controller, '/tasks/:id/undo-finish');
 		deleteTask(this.controller, '/tasks/:id/delete');
-
 		getAuthedUser(this.controller, '/user');
 		registerEmail(this.controller, '/email/register');
 

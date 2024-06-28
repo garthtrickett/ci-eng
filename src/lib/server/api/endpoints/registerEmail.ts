@@ -10,6 +10,10 @@ import { eq } from 'drizzle-orm';
 import { takeFirstOrThrow } from '../infrastructure/database/utils';
 import { customAlphabet } from 'nanoid';
 import dayjs from 'dayjs';
+import { type SendTemplate } from '../types';
+import handlebars from 'handlebars';
+import { send, getTemplate } from '../common/mail';
+
 // TODO: perhaps move stuff like takeFirstOrThrow into common
 
 export function registerEmail(honoController: Hono<HonoTypes>, path: string) {
@@ -24,15 +28,26 @@ export function registerEmail(honoController: Hono<HonoTypes>, path: string) {
 			where: eq(usersTable.email, email)
 		});
 
+		let validationToken;
 		if (existingUser) {
-			await createValidationRequest(existingUser.id, existingUser.email);
+			validationToken = await createValidationRequest(existingUser.id, existingUser.email);
 		}
 		if (!existingUser) {
 			const data: CreateUser = { email, verified: false };
 			const newUser = await db.insert(usersTable).values(data).returning().then(takeFirstOrThrow);
-			await createValidationRequest(newUser.id, newUser.email);
+			validationToken = await createValidationRequest(newUser.id, newUser.email);
+			console.log("shouldn't go here");
 		}
 		// TODO: need to put in th email send code here
+
+		if (!validationToken) {
+			throw c.json({ message: 'Validation token was not created' }, 404);
+		}
+
+		sendEmailVerification({
+			to: email,
+			props: { token: validationToken.token }
+		});
 
 		return c.json({ message: 'Verification email sent' });
 	});
@@ -51,4 +66,14 @@ async function createValidationRequest(userId: string, email: string) {
 		expiresAt: dayjs().add(15, 'minutes').toDate()
 	};
 	const token = db.insert(tokensTable).values(tokenCreationData).returning().then(takeFirstOrThrow);
+	return token;
+}
+
+async function sendEmailVerification(data: SendTemplate<{ token: string }>) {
+	const template = handlebars.compile(getTemplate('email-verification'));
+	return await send({
+		to: data.to,
+		subject: 'Email Verification',
+		html: template({ token: data.props.token })
+	});
 }
