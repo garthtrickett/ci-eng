@@ -17,3 +17,8 @@
 	<input name="token" type="text" />
 	<button type="submit">Login</button>
 </form>
+
+<h3>Logout</h3>
+<form action="?/logout" method="POST" use:enhance>
+	<button type="submit">Logout</button>
+</form>

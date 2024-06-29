@@ -16,29 +16,13 @@ import { deleteTask } from './endpoints/deleteTask';
 import { getAuthedUser } from './endpoints/getAuthedUser';
 import { signInEmail } from './endpoints/signInEmail';
 import { registerEmail } from './endpoints/registerEmail';
+import { verifyEmail } from './endpoints/verifyEmail';
+import { updateEmail } from './endpoints/updateEmail';
 import { logout } from './endpoints/logout';
 
 import type { Controller } from './interfaces/controller.interface';
 import { inject, injectable } from 'tsyringe';
 import { LuciaProvider } from './providers/lucia.provider';
-/* -------------------------------------------------------------------------- */
-/*                               Client Request                               */
-/* ------------------------------------ ▲ ----------------------------------- */
-/* ------------------------------------ | ----------------------------------- */
-/* ------------------------------------ ▼ ----------------------------------- */
-/*                                 Controller                                 */
-/* ---------------------------- (Request Routing) --------------------------- */
-/* ------------------------------------ ▲ ----------------------------------- */
-/* ------------------------------------ | ----------------------------------- */
-/* ------------------------------------ ▼ ----------------------------------- */
-/*                                   Service                                  */
-/* ---------------------------- (Business logic) ---------------------------- */
-/* ------------------------------------ ▲ ----------------------------------- */
-/* ------------------------------------ | ----------------------------------- */
-/* ------------------------------------ ▼ ----------------------------------- */
-/*                                 Repository                                 */
-/* ----------------------------- (Data storage) ----------------------------- */
-/* -------------------------------------------------------------------------- */
 
 /* ----------------------------------- Api ---------------------------------- */
 const app = new Hono().basePath('/api');
@@ -64,6 +48,8 @@ export class RouteController implements Controller {
 		getAuthedUser(this.controller, '/user');
 		registerEmail(this.controller, '/email/register');
 		signInEmail(this.controller, '/email/signin', this.lucia);
+		verifyEmail(this.controller, '/email/verify', this.lucia);
+		updateEmail(this.controller, '/email/update', this.lucia);
 		logout(this.controller, '/logout', this.lucia);
 
 		return this.controller;

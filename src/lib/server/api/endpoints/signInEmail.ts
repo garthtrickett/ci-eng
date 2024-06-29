@@ -1,23 +1,18 @@
-import { Hono } from 'hono';
-import { usersTable } from '../infrastructure/database/tables/users.table'; // Import your db instance
-import { tokensTable } from '../infrastructure/database/tables/tokens.table'; // Import your db instance
-import { db } from '../infrastructure/database';
-import type { HonoTypes } from '../types';
 import { zValidator } from '@hono/zod-validator';
-import { z } from 'zod';
-import {
-	type CreateUser,
-	type UpdateUser,
-	insertUserSchema
-} from '../infrastructure/database/tables/users.table';
 import { eq } from 'drizzle-orm';
-import { takeFirstOrThrow } from '../infrastructure/database/utils';
-import { type SendTemplate } from '../types';
 import handlebars from 'handlebars';
-import { send, getTemplate } from '../common/mail';
-import type { LuciaProvider } from '../providers';
+import { Hono } from 'hono';
 import { setCookie } from 'hono/cookie';
+import { z } from 'zod';
 import { BadRequest } from '../common/errors';
+import { getTemplate, send } from '../common/mail';
+import { validateToken } from '../common/validateToken';
+import { db } from '../infrastructure/database';
+import { type UpdateUser, usersTable } from '../infrastructure/database/tables/users.table'; // Import your db instance
+import { takeFirstOrThrow } from '../infrastructure/database/utils';
+import type { LuciaProvider } from '../providers';
+import type { HonoTypes } from '../types';
+import { type SendTemplate } from '../types';
 
 // TODO: perhaps move stuff like takeFirstOrThrow into common
 
@@ -71,37 +66,6 @@ export function signInEmail(honoController: Hono<HonoTypes>, path: string, lucia
 
 		return c.json({ message: 'ok' });
 	});
-}
-
-async function validateToken(userId: string, token: string) {
-	const foundToken = await db.transaction(async (tx) => {
-		const foundToken = await tx.query.tokensTable.findFirst({
-			where: eq(tokensTable.token, token)
-		});
-
-		if (foundToken) {
-			await tx
-				.delete(tokensTable)
-				.where(eq(tokensTable.id, foundToken.id))
-				.returning()
-				.then(takeFirstOrThrow);
-		}
-		return foundToken;
-	});
-
-	if (!foundToken) {
-		return false;
-	}
-
-	if (foundToken.userId !== userId) {
-		return false;
-	}
-
-	if (foundToken.expiresAt < new Date()) {
-		return false;
-	}
-
-	return foundToken;
 }
 
 function sendWelcomeEmail(data: SendTemplate<null>) {

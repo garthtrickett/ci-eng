@@ -17,16 +17,16 @@ import type { Controller } from '../interfaces/controller.interface';
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* ---------------------------------- About --------------------------------- */
-/* 
+/*
 Controllers are responsible for handling incoming requests and returning responses
 to a client.
 */
 /* ---------------------------------- Notes --------------------------------- */
 /*
-A controller should generally only handle routing and authorization through 
-middleware. 
+A controller should generally only handle routing and authorization through
+middleware.
 
-Any business logic should be delegated to a service. This keeps the controller 
+Any business logic should be delegated to a service. This keeps the controller
 clean and easy to read.
 */
 /* -------------------------------- Important ------------------------------- */
@@ -91,6 +91,7 @@ export class IamController implements Controller {
 				return c.json({ message: 'Verification email sent' });
 			})
 			.post('/email/verify', requireAuth, zValidator('json', verifyEmailDto), async (c) => {
+				console.log('get to here');
 				const json = c.req.valid('json');
 				await this.iamService.verifyEmail(c.var.user.id, json.token);
 				return c.json({ message: 'Verified and updated' });

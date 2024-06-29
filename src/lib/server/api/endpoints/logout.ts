@@ -38,5 +38,6 @@ export function logout(honoController: Hono<HonoTypes>, path: string, lucia: Luc
 			httpOnly: sessionCookie.attributes.httpOnly,
 			expires: sessionCookie.attributes.expires
 		});
+		return c.json({ status: 'success' });
 	});
 }
