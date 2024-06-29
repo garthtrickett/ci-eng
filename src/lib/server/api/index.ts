@@ -1,27 +1,26 @@
-import 'reflect-metadata';
-import './providers';
 import { Hono } from 'hono';
-import type { HonoTypes } from './types';
 import { hc } from 'hono/client';
+import 'reflect-metadata';
 import { container } from 'tsyringe';
-import { processAuth } from './middleware/process-auth.middleware';
-import { IamController } from '$lib/server/api/controllers/iam.controller';
 import { config } from './common/config';
+import { processAuth } from './middleware/process-auth.middleware';
+import './providers';
+import type { HonoTypes } from './types';
 
-import { finishTask } from './endpoints/finishTask';
-import { undoFinishTask } from './endpoints/undoFinishTask';
 import { createTask } from './endpoints/createTask';
-import { getTasks } from './endpoints/getTasks';
 import { deleteTask } from './endpoints/deleteTask';
+import { finishTask } from './endpoints/finishTask';
 import { getAuthedUser } from './endpoints/getAuthedUser';
-import { signInEmail } from './endpoints/signInEmail';
-import { registerEmail } from './endpoints/registerEmail';
-import { verifyEmail } from './endpoints/verifyEmail';
-import { updateEmail } from './endpoints/updateEmail';
+import { getTasks } from './endpoints/getTasks';
 import { logout } from './endpoints/logout';
+import { registerEmail } from './endpoints/registerEmail';
+import { signInEmail } from './endpoints/signInEmail';
+import { undoFinishTask } from './endpoints/undoFinishTask';
+import { updateEmail } from './endpoints/updateEmail';
+import { verifyEmail } from './endpoints/verifyEmail';
 
-import type { Controller } from './interfaces/controller.interface';
 import { inject, injectable } from 'tsyringe';
+import type { Controller } from './interfaces/controller.interface';
 import { LuciaProvider } from './providers/lucia.provider';
 
 /* ----------------------------------- Api ---------------------------------- */
@@ -47,18 +46,16 @@ export class RouteController implements Controller {
 
 		getAuthedUser(this.controller, '/user');
 		registerEmail(this.controller, '/email/register');
-		signInEmail(this.controller, '/email/signin', this.lucia);
-		verifyEmail(this.controller, '/email/verify', this.lucia);
-		updateEmail(this.controller, '/email/update', this.lucia);
-		logout(this.controller, '/logout', this.lucia);
+		signInEmail(this.controller, '/email/signin');
+		verifyEmail(this.controller, '/email/verify');
+		updateEmail(this.controller, '/email/update');
+		logout(this.controller, '/logout');
 
 		return this.controller;
 	}
 }
 
-const routes = app
-	.route('/iam', container.resolve(IamController).routes())
-	.route('/', container.resolve(RouteController).routes());
+const routes = app.route('/', container.resolve(RouteController).routes());
 
 /* -------------------------------------------------------------------------- */
 /*                                   Exports                                  */

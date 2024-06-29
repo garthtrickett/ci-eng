@@ -4,10 +4,11 @@ import { z } from 'zod';
 import { createValidationRequest } from '../common/createValidationRequest';
 import type { LuciaProvider } from '../providers';
 import type { HonoTypes } from '../types';
+import { lucia } from '../common/lucia';
 
 // TODO: perhaps move stuff like takeFirstOrThrow into common
 
-export function updateEmail(honoController: Hono<HonoTypes>, path: string, lucia: LuciaProvider) {
+export function updateEmail(honoController: Hono<HonoTypes>, path: string) {
 	const updateEmailDto = z.object({
 		email: z.string().email()
 	});

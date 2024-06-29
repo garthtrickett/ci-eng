@@ -19,8 +19,9 @@ import type { LuciaProvider } from '../providers';
 import { setCookie } from 'hono/cookie';
 import { BadRequest } from '../common/errors';
 import { requireAuth } from '../middleware/require-auth.middleware';
+import { lucia } from '../common/lucia';
 
-export function logout(honoController: Hono<HonoTypes>, path: string, lucia: LuciaProvider) {
+export function logout(honoController: Hono<HonoTypes>, path: string) {
 	const signInEmailDto = z.object({
 		email: z.string().email(),
 		token: z.string()

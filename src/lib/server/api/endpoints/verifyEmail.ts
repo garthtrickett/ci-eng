@@ -11,8 +11,9 @@ import { BadRequest } from '../common/errors';
 import { validateToken } from '../common/validateToken';
 import { type UpdateUser } from '../infrastructure/database/tables';
 import { takeFirstOrThrow } from '../infrastructure/database/utils';
+import { lucia } from '../common/lucia';
 
-export function verifyEmail(honoController: Hono<HonoTypes>, path: string, lucia: LuciaProvider) {
+export function verifyEmail(honoController: Hono<HonoTypes>, path: string) {
 	const verifyEmailDto = z.object({
 		token: z.string()
 	});

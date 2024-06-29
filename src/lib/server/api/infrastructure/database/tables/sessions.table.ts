@@ -2,11 +2,10 @@ import { pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 import { usersTable } from './users.table';
 import { relations } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
+import { cuid2 } from '../utils';
 
 export const sessionsTable = pgTable('sessions', {
-	id: text('id')
-		.primaryKey()
-		.$defaultFn(() => createId()),
+	id: cuid2('id').primaryKey(),
 	userId: text('user_id')
 		.notNull()
 		.references(() => usersTable.id),

@@ -3,6 +3,7 @@ import { DrizzlePostgreSQLAdapter } from '@lucia-auth/adapter-drizzle';
 import { Discord } from 'arctic';
 import { config } from './config';
 import { sessionsTable } from '../infrastructure/database/tables/sessions.table';
+
 import { db } from '../infrastructure/database';
 import { usersTable } from '../infrastructure/database/tables/users.table';
 

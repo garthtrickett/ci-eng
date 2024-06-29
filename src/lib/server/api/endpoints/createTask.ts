@@ -12,7 +12,7 @@ export function createTask(honoController: Hono<HonoTypes>, path: string) {
 	const createTaskDto = insertTaskSchema.pick({ name: true });
 	type CreateTaskDto = z.infer<typeof createTaskDto>;
 
-	return honoController.post(path, zValidator('json', createTaskDto), async (c) => {
+	return honoController.put(path, zValidator('json', createTaskDto), async (c) => {
 		const body = c.req.valid('json');
 		const task: CreateTask = {
 			name: body.name,

@@ -13,10 +13,11 @@ import { takeFirstOrThrow } from '../infrastructure/database/utils';
 import type { LuciaProvider } from '../providers';
 import type { HonoTypes } from '../types';
 import { type SendTemplate } from '../types';
+import { lucia } from '../common/lucia';
 
 // TODO: perhaps move stuff like takeFirstOrThrow into common
 
-export function signInEmail(honoController: Hono<HonoTypes>, path: string, lucia: LuciaProvider) {
+export function signInEmail(honoController: Hono<HonoTypes>, path: string) {
 	const signInEmailDto = z.object({
 		email: z.string().email(),
 		token: z.string()
