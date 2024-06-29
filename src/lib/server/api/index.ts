@@ -7,6 +7,7 @@ import { container } from 'tsyringe';
 import { processAuth } from './middleware/process-auth.middleware';
 import { IamController } from '$lib/server/api/controllers/iam.controller';
 import { config } from './common/config';
+
 import { finishTask } from './endpoints/finishTask';
 import { undoFinishTask } from './endpoints/undoFinishTask';
 import { createTask } from './endpoints/createTask';
@@ -14,8 +15,10 @@ import { getTasks } from './endpoints/getTasks';
 import { deleteTask } from './endpoints/deleteTask';
 import { getAuthedUser } from './endpoints/getAuthedUser';
 import { signInEmail } from './endpoints/signInEmail';
-import type { Controller } from './interfaces/controller.interface';
 import { registerEmail } from './endpoints/registerEmail';
+import { logout } from './endpoints/logout';
+
+import type { Controller } from './interfaces/controller.interface';
 import { inject, injectable } from 'tsyringe';
 import { LuciaProvider } from './providers/lucia.provider';
 /* -------------------------------------------------------------------------- */
@@ -57,9 +60,11 @@ export class RouteController implements Controller {
 		finishTask(this.controller, '/tasks/:id/finish');
 		undoFinishTask(this.controller, '/tasks/:id/undo-finish');
 		deleteTask(this.controller, '/tasks/:id/delete');
+
 		getAuthedUser(this.controller, '/user');
 		registerEmail(this.controller, '/email/register');
 		signInEmail(this.controller, '/email/signin', this.lucia);
+		logout(this.controller, '/logout', this.lucia);
 
 		return this.controller;
 	}
