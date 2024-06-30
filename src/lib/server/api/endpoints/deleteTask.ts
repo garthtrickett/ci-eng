@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { db } from '../infrastructure/database';

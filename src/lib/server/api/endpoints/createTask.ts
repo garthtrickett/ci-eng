@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { tasksTable } from '../infrastructure/database/tables/tasks.table'; // Import your db instance
@@ -7,11 +8,9 @@ import { insertTaskSchema } from '../infrastructure/database/tables/tasks.table'
 import { type CreateTask } from '../infrastructure/database/tables/tasks.table';
 
 import type { HonoTypes } from '../types';
+export const createTaskDto = insertTaskSchema.pick({ name: true });
 
 export function createTask(honoController: Hono<HonoTypes>, path: string) {
-	const createTaskDto = insertTaskSchema.pick({ name: true });
-	type CreateTaskDto = z.infer<typeof createTaskDto>;
-
 	return honoController.put(path, zValidator('json', createTaskDto), async (c) => {
 		const body = c.req.valid('json');
 		const task: CreateTask = {

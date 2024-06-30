@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -12,12 +13,9 @@ import { validateToken } from '../common/validateToken';
 import { type UpdateUser } from '../infrastructure/database/tables';
 import { takeFirstOrThrow } from '../infrastructure/database/utils';
 import { lucia } from '../common/lucia';
+import { verifyEmailDto } from '$lib/dtos/verify-email.dto';
 
 export function verifyEmail(honoController: Hono<HonoTypes>, path: string) {
-	const verifyEmailDto = z.object({
-		token: z.string()
-	});
-
 	return honoController.post(path, zValidator('json', verifyEmailDto), async (c) => {
 		const data = c.req.valid('json');
 

@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -5,14 +6,11 @@ import { createValidationRequest } from '../common/createValidationRequest';
 import type { LuciaProvider } from '../providers';
 import type { HonoTypes } from '../types';
 import { lucia } from '../common/lucia';
+import { updateEmailDto } from '$lib/dtos/update-email.dto';
 
 // TODO: perhaps move stuff like takeFirstOrThrow into common
 
 export function updateEmail(honoController: Hono<HonoTypes>, path: string) {
-	const updateEmailDto = z.object({
-		email: z.string().email()
-	});
-
 	return honoController.post(path, zValidator('json', updateEmailDto), async (c) => {
 		const data = c.req.valid('json');
 		const user = c.var.user;

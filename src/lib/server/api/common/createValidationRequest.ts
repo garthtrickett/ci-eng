@@ -1,4 +1,4 @@
-import { customAlphabet } from 'nanoid';
+import { generateRandomString, alphabet } from 'oslo/crypto';
 import dayjs from 'dayjs';
 import { tokensTable } from '../infrastructure/database/tables/tokens.table'; // Import your db instance
 import { takeFirstOrThrow } from '../infrastructure/database/utils';
@@ -9,10 +9,9 @@ import { send, getTemplate } from '../common/mail';
 
 export async function createValidationRequest(userId: string, email: string) {
 	function generateToken() {
-		const tokenAlphabet = '123456789ACDEFGHJKLMNPQRSTUVWXYZ'; // O and I removed for readability
-		return customAlphabet(tokenAlphabet, 6)();
+		const alphabet = '23456789ACDEFGHJKLMNPQRSTUVWXYZ'; // alphabet with removed look-alike characters (0, 1, O, I)
+		return generateRandomString(6, alphabet);
 	}
-
 	const tokenCreationData = {
 		userId: userId,
 		email,

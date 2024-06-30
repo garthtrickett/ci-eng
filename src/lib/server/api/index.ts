@@ -1,10 +1,9 @@
+import 'reflect-metadata';
 import { Hono } from 'hono';
 import { hc } from 'hono/client';
-import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { config } from './common/config';
-import { processAuth } from './middleware/process-auth.middleware';
-import './providers';
+import { validateAuthSession, verifyOrigin } from './middleware/auth.middleware';
 import type { HonoTypes } from './types';
 
 import { createTask } from './endpoints/createTask';
@@ -21,20 +20,18 @@ import { verifyEmail } from './endpoints/verifyEmail';
 
 import { inject, injectable } from 'tsyringe';
 import type { Controller } from './interfaces/controller.interface';
-import { LuciaProvider } from './providers/lucia.provider';
 
 /* ----------------------------------- Api ---------------------------------- */
 const app = new Hono().basePath('/api');
 
 /* --------------------------- Global Middlewares --------------------------- */
-app.use(processAuth);
+app.use(verifyOrigin).use(validateAuthSession);
 
 /* --------------------------------- Routes --------------------------------- */
 
 @injectable()
 export class RouteController implements Controller {
 	// Make Lucia available here then pass in
-	constructor(@inject(LuciaProvider) private lucia: LuciaProvider) {}
 
 	controller = new Hono<HonoTypes>();
 	routes() {

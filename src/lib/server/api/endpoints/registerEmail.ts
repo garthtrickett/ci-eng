@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Hono } from 'hono';
 import { usersTable } from '../infrastructure/database/tables/users.table'; // Import your db instance
 import { tokensTable } from '../infrastructure/database/tables/tokens.table'; // Import your db instance
@@ -10,13 +11,10 @@ import { eq } from 'drizzle-orm';
 import { takeFirstOrThrow } from '../infrastructure/database/utils';
 import { type SendTemplate } from '../types';
 import { createValidationRequest } from '../common/createValidationRequest';
+import { registerEmailDto } from '$lib/dtos/register-email.dto';
 // TODO: perhaps move stuff like takeFirstOrThrow into common
 
 export function registerEmail(honoController: Hono<HonoTypes>, path: string) {
-	const registerEmailDto = insertUserSchema.pick({ email: true });
-
-	type RegisterEmailDto = z.infer<typeof registerEmailDto>;
-
 	return honoController.post(path, zValidator('json', registerEmailDto), async (c) => {
 		const { email } = c.req.valid('json');
 

@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Hono } from 'hono';
 import { usersTable } from '../infrastructure/database/tables/users.table'; // Import your db instance
 import { tokensTable } from '../infrastructure/database/tables/tokens.table'; // Import your db instance
@@ -18,14 +19,15 @@ import { send, getTemplate } from '../common/mail';
 import type { LuciaProvider } from '../providers';
 import { setCookie } from 'hono/cookie';
 import { BadRequest } from '../common/errors';
-import { requireAuth } from '../middleware/require-auth.middleware';
+import { requireAuth } from '../middleware/auth.middleware';
 import { lucia } from '../common/lucia';
 
+export const signInEmailDto = z.object({
+	email: z.string().email(),
+	token: z.string()
+});
+
 export function logout(honoController: Hono<HonoTypes>, path: string) {
-	const signInEmailDto = z.object({
-		email: z.string().email(),
-		token: z.string()
-	});
 	return honoController.post(path, requireAuth, async (c) => {
 		const sessionId = c.var.session.id;
 		lucia.invalidateSession(sessionId);

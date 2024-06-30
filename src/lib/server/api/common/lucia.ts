@@ -13,25 +13,16 @@ export const lucia = new Lucia(adapter, {
 	sessionCookie: {
 		attributes: {
 			// set to `true` when using HTTPS
-			secure: process.env.NODE_ENV === 'production'
+			secure: config.isProduction
 		}
 	},
 	getUserAttributes: (attributes) => {
 		return {
 			// attributes has the type of DatabaseUserAttributes
-			id: attributes.id,
-			avatar: attributes.avatar,
-			email: attributes.email,
-			verified: attributes.verified
+			...attributes
 		};
 	}
 });
-
-export const discord = new Discord(
-	config.DISCORD_CLIENT_ID!,
-	config.DISCORD_CLIENT_SECRET!,
-	'http://localhost:5173/api/iam/discord/callback'
-);
 
 interface DatabaseUserAttributes {
 	id: string;

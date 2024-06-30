@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { zValidator } from '@hono/zod-validator';
 import { eq } from 'drizzle-orm';
 import handlebars from 'handlebars';
@@ -14,16 +15,9 @@ import type { LuciaProvider } from '../providers';
 import type { HonoTypes } from '../types';
 import { type SendTemplate } from '../types';
 import { lucia } from '../common/lucia';
-
-// TODO: perhaps move stuff like takeFirstOrThrow into common
+import { signInEmailDto } from '$lib/dtos/signin-email.dto';
 
 export function signInEmail(honoController: Hono<HonoTypes>, path: string) {
-	const signInEmailDto = z.object({
-		email: z.string().email(),
-		token: z.string()
-	});
-	type SignInEmailDto = z.infer<typeof signInEmailDto>;
-
 	return honoController.post(path, zValidator('json', signInEmailDto), async (c) => {
 		const { email, token } = c.req.valid('json');
 
