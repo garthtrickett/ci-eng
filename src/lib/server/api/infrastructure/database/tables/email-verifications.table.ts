@@ -4,15 +4,16 @@ import { timestamps } from '../utils';
 import { relations } from 'drizzle-orm';
 import { usersTable } from './users.table';
 
-export const tokensTable = pgTable('tokens', {
+export const emailVerificationsTable = pgTable('email_verifications', {
 	id: text('id')
 		.primaryKey()
 		.$defaultFn(() => createId()),
-	token: text('token').notNull().unique(),
+	hashedToken: text('hashed_token').notNull(),
 	userId: text('user_id')
 		.notNull()
-		.references(() => usersTable.id),
-	email: text('email').notNull(),
+		.references(() => usersTable.id)
+		.unique(),
+	requestedEmail: text('requested_email').notNull(),
 	expiresAt: timestamp('expires_at', {
 		mode: 'date',
 		withTimezone: true
@@ -20,9 +21,9 @@ export const tokensTable = pgTable('tokens', {
 	...timestamps
 });
 
-export const tokensRelations = relations(tokensTable, ({ one }) => ({
+export const emailVerificationsRelations = relations(emailVerificationsTable, ({ one }) => ({
 	user: one(usersTable, {
-		fields: [tokensTable.userId],
+		fields: [emailVerificationsTable.userId],
 		references: [usersTable.id]
 	})
 }));

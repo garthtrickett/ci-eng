@@ -15,7 +15,7 @@ import { takeFirstOrThrow } from '../infrastructure/database/utils';
 import { lucia } from '../common/lucia';
 import { verifyEmailDto } from '$lib/dtos/verify-email.dto';
 
-export function verifyEmail(honoController: Hono<HonoTypes>, path: string) {
+export function emailVerification(honoController: Hono<HonoTypes>, path: string) {
 	return honoController.post(path, zValidator('json', verifyEmailDto), async (c) => {
 		const data = c.req.valid('json');
 

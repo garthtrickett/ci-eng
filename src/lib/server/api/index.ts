@@ -31,9 +31,9 @@ app.use(verifyOrigin).use(validateAuthSession);
 
 @injectable()
 export class RouteController implements Controller {
-	// Make Lucia available here then pass in
+	//  TOO: RATE LIMIER ->  limiter({ limit: 10, minutes: 60 })
 
-	controller = new Hono<HonoTypes>();
+	controller = new Hono<HojnoTypes>();
 	routes() {
 		createTask(this.controller, '/tasks');
 		getTasks(this.controller, '/tasks');
@@ -42,11 +42,11 @@ export class RouteController implements Controller {
 		deleteTask(this.controller, '/tasks/:id/delete');
 
 		getAuthedUser(this.controller, '/user');
-		registerEmail(this.controller, '/email/register');
-		signInEmail(this.controller, '/email/signin');
-		verifyEmail(this.controller, '/email/verify');
-		updateEmail(this.controller, '/email/update');
+		loginRequest(this.controller, '/login/request');
+		loginVerify(this.controller, '/login/verify');
 		logout(this.controller, '/logout');
+		email(this.controller, '/email/update');
+		emailVerification(this.controller, '/email/verification');
 
 		return this.controller;
 	}

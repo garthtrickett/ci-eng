@@ -1,9 +1,9 @@
-import { createId } from '@paralleldrive/cuid2';
-import { boolean, pgTable, text } from 'drizzle-orm/pg-core';
-import { citext, timestamps } from '../utils';
 import { relations } from 'drizzle-orm';
+import { citext, timestamps } from '../utils';
+import { createId } from '@paralleldrive/cuid2';
 import { sessionsTable } from './sessions.table';
-import { tokensTable } from './tokens.table';
+import { boolean, pgTable, text } from 'drizzle-orm/pg-core';
+import { emailVerificationsTable } from './email-verifications.table';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { type InferInsertModel } from 'drizzle-orm';
 
@@ -17,9 +17,12 @@ export const usersTable = pgTable('users', {
 	...timestamps
 });
 
-export const usersRelations = relations(usersTable, ({ many }) => ({
+export const usersRelations = relations(usersTable, ({ many, one }) => ({
 	sessions: many(sessionsTable),
-	tokens: many(tokensTable)
+	emailVerifications: one(emailVerificationsTable, {
+		fields: [usersTable.id],
+		references: [emailVerificationsTable.userId]
+	})
 }));
 
 export const insertUserSchema = createInsertSchema(usersTable);

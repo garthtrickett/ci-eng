@@ -15,6 +15,13 @@
       "when": 1718795731345,
       "tag": "0001_unique_rogue",
       "breakpoints": false
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1719880827434,
+      "tag": "0002_ancient_scarlet_spider",
+      "breakpoints": false
     }
   ]
 }

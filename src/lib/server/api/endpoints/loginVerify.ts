@@ -17,7 +17,7 @@ import { type SendTemplate } from '../types';
 import { lucia } from '../common/lucia';
 import { signInEmailDto } from '$lib/dtos/signin-email.dto';
 
-export function signInEmail(honoController: Hono<HonoTypes>, path: string) {
+export function loginVerify(honoController: Hono<HonoTypes>, path: string) {
 	return honoController.post(path, zValidator('json', signInEmailDto), async (c) => {
 		const { email, token } = c.req.valid('json');
 

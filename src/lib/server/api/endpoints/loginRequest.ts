@@ -14,7 +14,7 @@ import { createValidationRequest } from '../common/createValidationRequest';
 import { registerEmailDto } from '$lib/dtos/register-email.dto';
 // TODO: perhaps move stuff like takeFirstOrThrow into common
 
-export function registerEmail(honoController: Hono<HonoTypes>, path: string) {
+export function loginRequest(honoController: Hono<HonoTypes>, path: string) {
 	return honoController.post(path, zValidator('json', registerEmailDto), async (c) => {
 		const { email } = c.req.valid('json');
 

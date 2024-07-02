@@ -4,6 +4,7 @@ import { redirect, type Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { ApiRoutes } from '$lib/server/api';
 import { parseApiResponse } from '$lib/client/helpers/api';
+import { StatusCodes } from '$lib/constants/status-codes';
 
 const apiClient: Handle = async ({ event, resolve }) => {
 	/* ------------------------------ Register api ------------------------------ */
@@ -23,7 +24,7 @@ const apiClient: Handle = async ({ event, resolve }) => {
 
 	async function getAuthedUserOrThrow() {
 		const { data } = await api.user.$get().then(parseApiResponse);
-		if (!data || !data.user) throw redirect(307, '/');
+		if (!data || !data.user) throw redirect(StatusCodes.TEMPORARY_REDIRECT, '/');
 		return data?.user;
 	}
 

@@ -10,7 +10,7 @@ import { updateEmailDto } from '$lib/dtos/update-email.dto';
 
 // TODO: perhaps move stuff like takeFirstOrThrow into common
 
-export function updateEmail(honoController: Hono<HonoTypes>, path: string) {
+export function email(honoController: Hono<HonoTypes>, path: string) {
 	return honoController.post(path, zValidator('json', updateEmailDto), async (c) => {
 		const data = c.req.valid('json');
 		const user = c.var.user;
