@@ -1,38 +1,62 @@
 import 'reflect-metadata';
+
 import { Hono } from 'hono';
 import { usersTable } from '../infrastructure/database/tables/users.table'; // Import your db instance
-import { tokensTable } from '../infrastructure/database/tables/tokens.table'; // Import your db instance
 import { db } from '../infrastructure/database';
 import type { HonoTypes } from '../types';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { type CreateUser, insertUserSchema } from '../infrastructure/database/tables/users.table';
-import { eq } from 'drizzle-orm';
+
 import { takeFirstOrThrow } from '../infrastructure/database/utils';
 import { type SendTemplate } from '../types';
 import { createValidationRequest } from '../common/createValidationRequest';
 import { registerEmailDto } from '$lib/dtos/register-email.dto';
+
+import { and, eq, gte, type InferInsertModel } from 'drizzle-orm';
+import { TimeSpan, createDate, type TimeSpanUnit } from 'oslo';
+import { Scrypt } from 'oslo/password';
+import { generateRandomString } from 'oslo/crypto';
+import { loginRequestsTable } from '../infrastructure/database/tables';
+import handlebars from 'handlebars';
+import { getTemplate } from '../common/mail';
+import { send } from '../common/mail';
+import { generateTokenWithExpiryAndHash } from '../common/generateTokenWithExpiryAndHash';
+
 // TODO: perhaps move stuff like takeFirstOrThrow into common
+
+export type CreateLoginRequest = Pick<
+	InferInsertModel<typeof loginRequestsTable>,
+	'email' | 'expiresAt' | 'hashedToken'
+>;
 
 export function loginRequest(honoController: Hono<HonoTypes>, path: string) {
 	return honoController.post(path, zValidator('json', registerEmailDto), async (c) => {
 		const { email } = c.req.valid('json');
 
-		const existingUser = await db.query.usersTable.findFirst({
-			where: eq(usersTable.email, email)
-		});
+		const { token, expiry, hashedToken } = await generateTokenWithExpiryAndHash(15, 'm');
 
-		let validationToken;
-		if (existingUser) {
-			validationToken = await createValidationRequest(existingUser.id, existingUser.email);
+		async function create(data: CreateLoginRequest) {
+			return db
+				.insert(loginRequestsTable)
+				.values(data)
+				.onConflictDoUpdate({
+					target: loginRequestsTable.email,
+					set: data
+				})
+				.returning()
+				.then(takeFirstOrThrow);
 		}
-		if (!existingUser) {
-			const data: CreateUser = { email, verified: false };
-			const newUser = await db.insert(usersTable).values(data).returning().then(takeFirstOrThrow);
-			validationToken = await createValidationRequest(newUser.id, newUser.email);
-		}
-		if (!validationToken) {
-			throw c.json({ message: 'Token not created and verification email not sent' }, 404);
+
+		await create({ email: email, hashedToken, expiresAt: expiry });
+
+		function sendLoginRequest(data: SendTemplate<{ token: string }>) {
+			const template = handlebars.compile(getTemplate('email-verification-token'));
+			return send({
+				to: data.to,
+				subject: 'Login Request',
+				html: template({ token: data.props.token })
+			});
 		}
 		return c.json({ message: 'Verification email sent' });
 	});

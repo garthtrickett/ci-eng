@@ -9,14 +9,15 @@ import type { HonoTypes } from './types';
 import { createTask } from './endpoints/createTask';
 import { deleteTask } from './endpoints/deleteTask';
 import { finishTask } from './endpoints/finishTask';
+import { undoFinishTask } from './endpoints/undoFinishTask';
 import { getAuthedUser } from './endpoints/getAuthedUser';
 import { getTasks } from './endpoints/getTasks';
+
+import { loginRequest } from './endpoints/loginRequest';
+import { loginVerification } from './endpoints/loginVerification';
 import { logout } from './endpoints/logout';
-import { registerEmail } from './endpoints/registerEmail';
-import { signInEmail } from './endpoints/signInEmail';
-import { undoFinishTask } from './endpoints/undoFinishTask';
-import { updateEmail } from './endpoints/updateEmail';
-import { verifyEmail } from './endpoints/verifyEmail';
+import { email } from './endpoints/email';
+import { emailVerification } from './endpoints/emailVerification';
 
 import { inject, injectable } from 'tsyringe';
 import type { Controller } from './interfaces/controller.interface';
@@ -33,7 +34,7 @@ app.use(verifyOrigin).use(validateAuthSession);
 export class RouteController implements Controller {
 	//  TOO: RATE LIMIER ->  limiter({ limit: 10, minutes: 60 })
 
-	controller = new Hono<HojnoTypes>();
+	controller = new Hono<HonoTypes>();
 	routes() {
 		createTask(this.controller, '/tasks');
 		getTasks(this.controller, '/tasks');
@@ -43,9 +44,9 @@ export class RouteController implements Controller {
 
 		getAuthedUser(this.controller, '/user');
 		loginRequest(this.controller, '/login/request');
-		loginVerify(this.controller, '/login/verify');
+		loginVerification(this.controller, '/login/verification');
 		logout(this.controller, '/logout');
-		email(this.controller, '/email/update');
+		email(this.controller, '/email');
 		emailVerification(this.controller, '/email/verification');
 
 		return this.controller;
