@@ -1,26 +1,10 @@
-import 'reflect-metadata';
 import { Hono } from 'hono';
-import { usersTable } from '../infrastructure/database/tables/users.table'; // Import your db instance
-import { tokensTable } from '../infrastructure/database/tables/tokens.table'; // Import your db instance
-import { db } from '../infrastructure/database';
-import type { HonoTypes } from '../types';
-import { zValidator } from '@hono/zod-validator';
-import { z } from 'zod';
-import {
-	type CreateUser,
-	type UpdateUser,
-	insertUserSchema
-} from '../infrastructure/database/tables/users.table';
-import { eq } from 'drizzle-orm';
-import { takeFirstOrThrow } from '../infrastructure/database/utils';
-import { type SendTemplate } from '../types';
-import handlebars from 'handlebars';
-import { send, getTemplate } from '../common/mail';
-import type { LuciaProvider } from '../providers';
 import { setCookie } from 'hono/cookie';
-import { BadRequest } from '../common/errors';
-import { requireAuth } from '../middleware/auth.middleware';
+import 'reflect-metadata';
+import { z } from 'zod';
 import { lucia } from '../common/lucia';
+import { requireAuth } from '../middleware/auth.middleware';
+import type { HonoTypes } from '../types';
 
 export const signInEmailDto = z.object({
 	email: z.string().email(),

@@ -10,12 +10,13 @@ type SendMail = {
 	subject: string;
 	html: string;
 };
+// Library WIFI breaks mail
 
 export function getTemplate(template: string) {
 	const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 	const __dirname = path.dirname(__filename); // get the name of the directory
 	return fs.readFileSync(
-		path.join(__dirname, `../infrastructure/email-templates/${template}.handlebars`),
+		path.join(__dirname, `../infrastructure/email-templates/${template}.hbs`),
 		'utf-8'
 	);
 }
@@ -26,12 +27,11 @@ export async function send({ to, subject, html }: SendMail) {
 		port: 587,
 		secure: false, // Use `true` for port 465, `false` for all other ports
 		auth: {
-			user: 'aleen.hoeger87@ethereal.email',
-			pass: 'snwfBJvRR9Vp4wzYKc'
+			user: 'collin79@ethereal.email',
+			pass: 'XWs5AV9rfyZWewbsbb'
 		}
 	});
 
-	// Library WIFI breaks this
 	transporter
 		.sendMail({
 			from: '"Example" <example@ethereal.email>',

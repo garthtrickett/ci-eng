@@ -16,7 +16,7 @@ import { getTasks } from './endpoints/getTasks';
 import { loginRequest } from './endpoints/loginRequest';
 import { loginVerification } from './endpoints/loginVerification';
 import { logout } from './endpoints/logout';
-import { email } from './endpoints/email';
+import { emailUpdate } from './endpoints/emailUpdate';
 import { emailVerification } from './endpoints/emailVerification';
 
 import { inject, injectable } from 'tsyringe';
@@ -42,12 +42,12 @@ export class RouteController implements Controller {
 		undoFinishTask(this.controller, '/tasks/:id/undo-finish');
 		deleteTask(this.controller, '/tasks/:id/delete');
 
+		emailUpdate(this.controller, '/email/update');
+		emailVerification(this.controller, '/email/verification');
 		getAuthedUser(this.controller, '/user');
 		loginRequest(this.controller, '/login/request');
 		loginVerification(this.controller, '/login/verification');
 		logout(this.controller, '/logout');
-		email(this.controller, '/email');
-		emailVerification(this.controller, '/email/verification');
 
 		return this.controller;
 	}
