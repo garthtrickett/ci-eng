@@ -12,8 +12,6 @@ import { generateTokenWithExpiryAndHash } from '../common/generateTokenWithExpir
 import { getTemplate, send } from '../common/mail';
 import { loginRequestsTable } from '../infrastructure/database/tables';
 
-// TODO: perhaps move stuff like takeFirstOrThrow into common
-
 export type CreateLoginRequest = Pick<
 	InferInsertModel<typeof loginRequestsTable>,
 	'email' | 'expiresAt' | 'hashedToken'
