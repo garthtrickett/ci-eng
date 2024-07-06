@@ -1,4 +1,8 @@
 import type { ClientResponse } from 'hono/client';
+import type { ApiRoutes } from '$lib/server/api/index';
+import { hc } from 'hono/client';
+
+export const rpc = hc<ApiRoutes>('/');
 
 export async function parseApiResponse<T>(response: ClientResponse<T>) {
 	if (response.status === 204 || response.headers.get('Content-Length') === '0') {

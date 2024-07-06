@@ -27,8 +27,8 @@ export async function send({ to, subject, html }: SendMail) {
 		port: 587,
 		secure: false, // Use `true` for port 465, `false` for all other ports
 		auth: {
-			user: 'collin79@ethereal.email',
-			pass: 'XWs5AV9rfyZWewbsbb'
+			user: 'eveline62@ethereal.email',
+			pass: 'HN6t6E8Uap8WT52mm9'
 		}
 	});
 

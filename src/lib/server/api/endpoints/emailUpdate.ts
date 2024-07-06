@@ -10,66 +10,67 @@ import { db } from '../infrastructure/database';
 import { usersTable } from '../infrastructure/database/tables';
 import { emailVerificationsTable } from '../infrastructure/database/tables/email-verifications.table';
 import { takeFirstOrThrow } from '../infrastructure/database/utils';
-import type { HonoTypes } from '../types';
 import { type SendTemplate } from '../types';
+import { requireAuth } from '../middleware/auth.middleware';
 
 export type CreateEmailVerification = Pick<
 	InferInsertModel<typeof emailVerificationsTable>,
 	'requestedEmail' | 'hashedToken' | 'userId' | 'expiresAt'
 >;
 
-export function emailUpdate(honoController: Hono<HonoTypes>, path: string) {
-	return honoController.patch(path, zValidator('json', updateEmailDto), async (c) => {
-		const data = c.req.valid('json');
-		const { token, expiry, hashedToken } = await generateTokenWithExpiryAndHash(15, 'm');
+const app = new Hono();
 
-		if (!c.var.user) {
-			throw Error('User context not found');
-		}
+app.patch('/', requireAuth, zValidator('json', updateEmailDto), async (c) => {
+	const data = c.req.valid('json');
+	const { token, expiry, hashedToken } = await generateTokenWithExpiryAndHash(15, 'm');
 
-		const user = await db.query.usersTable.findFirst({
-			where: eq(usersTable.id, c.var.user.id)
-		});
+	// c.var.user exists when i run code but errors in ide
+	if (!c.var.user) {
+		throw Error('User context not found');
+	}
 
-		if (!user) {
-			throw Error('User not found');
-		}
-
-		// no idea why its making me do these two liens
-
-		create({
-			requestedEmail: data.email,
-			userId: user.id,
-			hashedToken: hashedToken,
-			expiresAt: expiry
-		});
-
-		sendEmailVerificationToken({
-			to: data.email,
-			props: {
-				token
-			}
-		});
-
-		sendEmailChangeNotification({
-			to: user.email,
-			props: null
-		});
-
-		return c.json({ message: 'Verification email sent' });
+	const user = await db.query.usersTable.findFirst({
+		where: eq(usersTable.id, c.var.user.id)
 	});
 
-	async function create(data: CreateEmailVerification) {
-		return db
-			.insert(emailVerificationsTable)
-			.values(data)
-			.onConflictDoUpdate({
-				target: emailVerificationsTable.userId,
-				set: data
-			})
-			.returning()
-			.then(takeFirstOrThrow);
+	if (!user) {
+		throw Error('User not found');
 	}
+
+	create({
+		requestedEmail: data.email,
+		userId: user.id,
+		hashedToken: hashedToken,
+		expiresAt: expiry
+	});
+
+	sendEmailVerificationToken({
+		to: data.email,
+		props: {
+			token
+		}
+	});
+
+	sendEmailChangeNotification({
+		to: user.email,
+		props: null
+	});
+
+	return c.json({ message: 'Verification email sent' });
+});
+
+export default app;
+
+async function create(data: CreateEmailVerification) {
+	return db
+		.insert(emailVerificationsTable)
+		.values(data)
+		.onConflictDoUpdate({
+			target: emailVerificationsTable.userId,
+			set: data
+		})
+		.returning()
+		.then(takeFirstOrThrow);
 }
 
 function sendEmailVerificationToken(data: SendTemplate<{ token: string }>) {

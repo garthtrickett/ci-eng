@@ -8,28 +8,30 @@ import { BadRequest } from '../common/errors';
 import { db } from '../infrastructure/database';
 import { emailVerificationsTable, usersTable } from '../infrastructure/database/tables';
 import { takeFirst, takeFirstOrThrow } from '../infrastructure/database/utils';
-import type { HonoTypes } from '../types';
+import { requireAuth } from '../middleware/auth.middleware';
 
-export function emailVerification(honoController: Hono<HonoTypes>, path: string) {
-	return honoController.post(path, zValidator('json', verifyEmailDto), async (c) => {
-		const { token } = c.req.valid('json');
+const app = new Hono();
 
-		if (!c.var.user) {
-			throw BadRequest('User not found in context');
-		}
+app.post('/', requireAuth, zValidator('json', verifyEmailDto), async (c) => {
+	const { token } = c.req.valid('json');
 
-		const user = await db.query.usersTable.findFirst({
-			where: eq(usersTable.id, c.var.user.id)
-		});
+	if (!c.var.user) {
+		throw BadRequest('User not found in context');
+	}
 
-		if (!user) {
-			throw BadRequest('User not found');
-		}
-		await processEmailVerificationRequest(c.var.user.id, token);
-
-		return c.json({ message: 'Verified and updated' });
+	const user = await db.query.usersTable.findFirst({
+		where: eq(usersTable.id, c.var.user.id)
 	});
-}
+
+	if (!user) {
+		throw BadRequest('User not found');
+	}
+	await processEmailVerificationRequest(c.var.user.id, token);
+
+	return c.json({ message: 'Verified and updated' });
+});
+
+export default app;
 
 async function processEmailVerificationRequest(userId: string, token: string) {
 	const validRecord = await findAndBurnEmailVerificationToken(userId, token);

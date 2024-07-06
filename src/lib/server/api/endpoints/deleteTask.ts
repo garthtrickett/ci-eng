@@ -7,25 +7,24 @@ import { eq } from 'drizzle-orm';
 import { tasksTable, insertTaskSchema } from '../infrastructure/database/tables/tasks.table'; // Import your db instance
 import type { HonoTypes } from '../types';
 
-export function deleteTask(honoController: Hono<HonoTypes>, path: string) {
-	const taskParam = insertTaskSchema.pick({ id: true });
-	type TaskParam = z.infer<typeof taskParam>;
+const taskParam = insertTaskSchema.pick({ id: true });
 
-	return honoController.delete(path, zValidator('param', taskParam), async (c) => {
-		const { id } = c.req.valid('param');
+const app = new Hono();
 
-		if (typeof id !== 'string') {
-			throw c.json({ message: 'TaskId not provided' }, 404);
-		}
+app.delete('/tasks/:id/delete', zValidator('param', taskParam), async (c) => {
+	const { id } = c.req.valid('param');
 
-		const deletedTask = await db.delete(tasksTable).where(eq(tasksTable.id, id)).returning();
+	if (typeof id !== 'string') {
+		throw c.json({ message: 'TaskId not provided' }, 404);
+	}
 
-		type ReturnedTask = typeof deletedTask;
+	const deletedTask = await db.delete(tasksTable).where(eq(tasksTable.id, id)).returning();
 
-		if (deletedTask) {
-			return c.json(deletedTask);
-		}
+	if (deletedTask) {
+		return c.json(deletedTask);
+	}
 
-		throw c.json({ message: 'Task not found' }, 404);
-	});
-}
+	throw c.json({ message: 'Task not found' }, 404);
+});
+
+export default app;

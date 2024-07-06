@@ -13,28 +13,28 @@ import { db } from '../infrastructure/database';
 import { loginRequestsTable } from '../infrastructure/database/tables';
 import { usersTable } from '../infrastructure/database/tables/users.table'; // Import your db instance
 import { takeFirst, takeFirstOrThrow } from '../infrastructure/database/utils';
-import type { HonoTypes } from '../types';
 import { type SendTemplate } from '../types';
 
-export function loginVerification(honoController: Hono<HonoTypes>, path: string) {
-	return honoController.post(path, zValidator('json', signInEmailDto), async (c) => {
-		const { email, token } = c.req.valid('json');
-		const session = await verify({ email, token });
-		const sessionCookie = lucia.createSessionCookie(session.id);
+const app = new Hono();
+app.post('/', zValidator('json', signInEmailDto), async (c) => {
+	const { email, token } = c.req.valid('json');
+	const session = await verify({ email, token });
+	const sessionCookie = lucia.createSessionCookie(session.id);
 
-		setCookie(c, sessionCookie.name, sessionCookie.value, {
-			path: sessionCookie.attributes.path,
-			maxAge: sessionCookie.attributes.maxAge,
-			domain: sessionCookie.attributes.domain,
-			sameSite: sessionCookie.attributes.sameSite as any,
-			secure: sessionCookie.attributes.secure,
-			httpOnly: sessionCookie.attributes.httpOnly,
-			expires: sessionCookie.attributes.expires
-		});
-
-		return c.json({ message: 'ok' });
+	setCookie(c, sessionCookie.name, sessionCookie.value, {
+		path: sessionCookie.attributes.path,
+		maxAge: sessionCookie.attributes.maxAge,
+		domain: sessionCookie.attributes.domain,
+		sameSite: sessionCookie.attributes.sameSite as any,
+		secure: sessionCookie.attributes.secure,
+		httpOnly: sessionCookie.attributes.httpOnly,
+		expires: sessionCookie.attributes.expires
 	});
-}
+
+	return c.json({ message: 'ok' });
+});
+
+export default app;
 
 async function verify(data: SignInEmailDto) {
 	const validLoginRequest = await fetchValidRequest(data.email, data.token);

@@ -2,7 +2,6 @@ import 'reflect-metadata';
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 import { db } from '../infrastructure/database';
-import type { HonoTypes } from '../types';
 import { registerEmailDto } from '$lib/dtos/register-email.dto';
 import { takeFirstOrThrow } from '../infrastructure/database/utils';
 import { type SendTemplate } from '../types';
@@ -17,22 +16,23 @@ export type CreateLoginRequest = Pick<
 	'email' | 'expiresAt' | 'hashedToken'
 >;
 
-export function loginRequest(honoController: Hono<HonoTypes>, path: string) {
-	return honoController.post(path, zValidator('json', registerEmailDto), async (c) => {
-		const { email } = c.req.valid('json');
+const app = new Hono();
+app.post('/', zValidator('json', registerEmailDto), async (c) => {
+	const { email } = c.req.valid('json');
 
-		const { token, expiry, hashedToken } = await generateTokenWithExpiryAndHash(15, 'm');
+	const { token, expiry, hashedToken } = await generateTokenWithExpiryAndHash(15, 'm');
 
-		await create({ email: email, hashedToken, expiresAt: expiry });
+	await create({ email: email, hashedToken, expiresAt: expiry });
 
-		await sendLoginRequest({
-			to: email,
-			props: { token: token }
-		});
-
-		return c.json({ message: 'Verification email sent' });
+	await sendLoginRequest({
+		to: email,
+		props: { token: token }
 	});
-}
+
+	return c.json({ message: 'Verification email sent' });
+});
+
+export default app;
 
 async function create(data: CreateLoginRequest) {
 	return db

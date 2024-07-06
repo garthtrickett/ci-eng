@@ -1,26 +1,20 @@
 import 'reflect-metadata';
 import { Hono } from 'hono';
-import { hc } from 'hono/client';
-import { container } from 'tsyringe';
-import { config } from './common/config';
 import { validateAuthSession, verifyOrigin } from './middleware/auth.middleware';
-import type { HonoTypes } from './types';
 
-import { createTask } from './endpoints/createTask';
-import { deleteTask } from './endpoints/deleteTask';
-import { finishTask } from './endpoints/finishTask';
-import { undoFinishTask } from './endpoints/undoFinishTask';
-import { getAuthedUser } from './endpoints/getAuthedUser';
-import { getTasks } from './endpoints/getTasks';
+import createTask from './endpoints/createTask';
+import deleteTask from './endpoints/deleteTask';
+import finishTask from './endpoints/finishTask';
+import undoFinishTask from './endpoints/undoFinishTask';
+import getTasks from './endpoints/getTasks';
 
-import { loginRequest } from './endpoints/loginRequest';
-import { loginVerification } from './endpoints/loginVerification';
-import { logout } from './endpoints/logout';
-import { emailUpdate } from './endpoints/emailUpdate';
-import { emailVerification } from './endpoints/emailVerification';
+import getAuthedUser from './endpoints/getAuthedUser';
 
-import { inject, injectable } from 'tsyringe';
-import type { Controller } from './interfaces/controller.interface';
+import loginRequest from './endpoints/loginRequest';
+import loginVerification from './endpoints/loginVerification';
+import logout from './endpoints/logout';
+import emailUpdate from './endpoints/emailUpdate';
+import emailVerification from './endpoints/emailVerification';
 
 /* ----------------------------------- Api ---------------------------------- */
 const app = new Hono().basePath('/api');
@@ -30,35 +24,24 @@ app.use(verifyOrigin).use(validateAuthSession);
 
 /* --------------------------------- Routes --------------------------------- */
 
-@injectable()
-export class RouteController implements Controller {
-	//  TOO: RATE LIMIER ->  limiter({ limit: 10, minutes: 60 })
+const routes = app
+	.route('/tasks', getTasks)
+	.route('/tasks', createTask)
+	.route('/tasks/:id/finish', finishTask)
+	.route('/tasks/:id/undo-finish', undoFinishTask)
+	.route('/tasks/:id/delete', deleteTask)
 
-	controller = new Hono<HonoTypes>();
-	routes() {
-		createTask(this.controller, '/tasks');
-		getTasks(this.controller, '/tasks');
-		finishTask(this.controller, '/tasks/:id/finish');
-		undoFinishTask(this.controller, '/tasks/:id/undo-finish');
-		deleteTask(this.controller, '/tasks/:id/delete');
+	.route('/email/update', emailUpdate)
+	.route('/email/verification', emailVerification)
 
-		emailUpdate(this.controller, '/email/update');
-		emailVerification(this.controller, '/email/verification');
-		getAuthedUser(this.controller, '/user');
-		loginRequest(this.controller, '/login/request');
-		loginVerification(this.controller, '/login/verification');
-		logout(this.controller, '/logout');
+	.route('/user', getAuthedUser)
 
-		return this.controller;
-	}
-}
-
-const routes = app.route('/', container.resolve(RouteController).routes());
+	.route('/login/request', loginRequest)
+	.route('/login/verification', loginVerification)
+	.route('/logout', logout);
 
 /* -------------------------------------------------------------------------- */
 /*                                   Exports                                  */
 /* -------------------------------------------------------------------------- */
-export const rpc = hc<typeof routes>(config.ORIGIN);
-export type ApiClient = typeof rpc;
 export type ApiRoutes = typeof routes;
 export { app };
