@@ -8,9 +8,7 @@ import { type CreateTask } from '../infrastructure/database/tables/tasks.table';
 
 export const createTaskDto = insertTaskSchema.pick({ name: true });
 
-const app = new Hono();
-
-app.put('/', zValidator('json', createTaskDto), async (c) => {
+const app = new Hono().put('/', zValidator('json', createTaskDto), async (c) => {
 	const body = c.req.valid('json');
 	const task: CreateTask = {
 		name: body.name,

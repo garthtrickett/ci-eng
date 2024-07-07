@@ -6,11 +6,9 @@ import { db } from '../infrastructure/database';
 import { insertTaskSchema } from '../infrastructure/database/tables/tasks.table';
 import { eq } from 'drizzle-orm';
 
-const app = new Hono();
-
 const taskParam = insertTaskSchema.pick({ id: true });
 
-app.patch('/:id/undo-finish', zValidator('param', taskParam), async (c) => {
+const app = new Hono().patch('/:id/undo-finish', zValidator('param', taskParam), async (c) => {
 	const { id } = c.req.valid('param');
 
 	if (typeof id !== 'string') {

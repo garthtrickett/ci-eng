@@ -18,9 +18,7 @@ export type CreateEmailVerification = Pick<
 	'requestedEmail' | 'hashedToken' | 'userId' | 'expiresAt'
 >;
 
-const app = new Hono();
-
-app.patch('/', requireAuth, zValidator('json', updateEmailDto), async (c) => {
+const app = new Hono().patch('/', requireAuth, zValidator('json', updateEmailDto), async (c) => {
 	const data = c.req.valid('json');
 	const { token, expiry, hashedToken } = await generateTokenWithExpiryAndHash(15, 'm');
 

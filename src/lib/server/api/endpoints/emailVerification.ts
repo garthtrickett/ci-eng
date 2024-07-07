@@ -10,9 +10,7 @@ import { emailVerificationsTable, usersTable } from '../infrastructure/database/
 import { takeFirst, takeFirstOrThrow } from '../infrastructure/database/utils';
 import { requireAuth } from '../middleware/auth.middleware';
 
-const app = new Hono();
-
-app.post('/', requireAuth, zValidator('json', verifyEmailDto), async (c) => {
+const app = new Hono().post('/', requireAuth, zValidator('json', verifyEmailDto), async (c) => {
 	const { token } = c.req.valid('json');
 
 	if (!c.var.user) {

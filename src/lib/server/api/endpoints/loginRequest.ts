@@ -16,8 +16,7 @@ export type CreateLoginRequest = Pick<
 	'email' | 'expiresAt' | 'hashedToken'
 >;
 
-const app = new Hono();
-app.post('/', zValidator('json', registerEmailDto), async (c) => {
+const app = new Hono().post('/', zValidator('json', registerEmailDto), async (c) => {
 	const { email } = c.req.valid('json');
 
 	const { token, expiry, hashedToken } = await generateTokenWithExpiryAndHash(15, 'm');

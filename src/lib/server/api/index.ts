@@ -17,9 +17,11 @@ import emailUpdate from './endpoints/emailUpdate';
 import emailVerification from './endpoints/emailVerification';
 
 /* ----------------------------------- Api ---------------------------------- */
+
 const app = new Hono().basePath('/api');
 
 /* --------------------------- Global Middlewares --------------------------- */
+
 app.use(verifyOrigin).use(validateAuthSession);
 
 /* --------------------------------- Routes --------------------------------- */
@@ -44,4 +46,5 @@ const routes = app
 /*                                   Exports                                  */
 /* -------------------------------------------------------------------------- */
 export type ApiRoutes = typeof routes;
+export { routes };
 export { app };

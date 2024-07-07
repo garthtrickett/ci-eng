@@ -4,9 +4,7 @@ import 'reflect-metadata';
 import { lucia } from '../common/lucia';
 import { requireAuth } from '../middleware/auth.middleware';
 
-const app = new Hono();
-
-app.post('/', requireAuth, async (c) => {
+const app = new Hono().post('/', requireAuth, async (c) => {
 	const sessionId = c.var.session.id;
 	lucia.invalidateSession(sessionId);
 	const sessionCookie = lucia.createBlankSessionCookie();

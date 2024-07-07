@@ -8,15 +8,7 @@
 		const data = await res.json();
 		console.log(data);
 
-		// Dummy todos
-		const todos = [
-			{ id: 1, title: 'Todo 1' },
-			{ id: 2, title: 'Todo 2' },
-			{ id: 3, title: 'Todo 3' }
-			// Add more todos as needed
-		];
-
-		return todos;
+		return data;
 	}
 
 	const query = createQuery({
@@ -31,8 +23,8 @@
 	{:else if $query.isError}
 		<p>Error: {$query.error.message}</p>
 	{:else if $query.isSuccess}
-		{#each $query.data as todo}
-			<p>{todo.title}</p>
+		{#each $query.data as task}
+			<p>{task.name}</p>
 		{/each}
 	{/if}
 </div>

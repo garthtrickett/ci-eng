@@ -15,8 +15,7 @@ import { usersTable } from '../infrastructure/database/tables/users.table'; // I
 import { takeFirst, takeFirstOrThrow } from '../infrastructure/database/utils';
 import { type SendTemplate } from '../types';
 
-const app = new Hono();
-app.post('/', zValidator('json', signInEmailDto), async (c) => {
+const app = new Hono().post('/', zValidator('json', signInEmailDto), async (c) => {
 	const { email, token } = c.req.valid('json');
 	const session = await verify({ email, token });
 	const sessionCookie = lucia.createSessionCookie(session.id);
