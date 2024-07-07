@@ -4,8 +4,9 @@ import { updateEmailDto } from '$lib/dtos/update-email.dto';
 import { verifyEmailDto } from '$lib/dtos/verify-email.dto';
 import { fail, setError, superValidate } from 'sveltekit-superforms';
 import { StatusCodes } from '$lib/constants/status-codes.js';
+import { type PageServerLoad, type Actions } from '../$types';
 
-export let load = async (event) => {
+export let load: PageServerLoad = async (event) => {
 	const authedUser = await event.locals.getAuthedUserOrThrow();
 
 	return {
@@ -15,7 +16,7 @@ export let load = async (event) => {
 	};
 };
 
-export const actions = {
+export const actions: Actions = {
 	updateEmail: async ({ request, locals }) => {
 		const updateEmailForm = await superValidate(request, zod(updateEmailDto));
 

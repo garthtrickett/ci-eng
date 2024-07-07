@@ -4,15 +4,17 @@ import { signInEmailDto } from '$lib/dtos/signin-email.dto';
 import { setError, superValidate } from 'sveltekit-superforms';
 import { registerEmailDto } from '$lib/dtos/register-email.dto';
 import { StatusCodes } from '$lib/constants/status-codes';
+import { type PageServerLoad } from './$types';
+import { type Actions } from './$types';
 
-export const load = async () => {
+export const load: PageServerLoad = async () => {
 	return {
 		emailRegisterForm: await superValidate(zod(registerEmailDto)),
 		emailSigninForm: await superValidate(zod(signInEmailDto))
 	};
 };
 
-export const actions = {
+export const actions: Actions = {
 	register: async ({ locals, request }) => {
 		const emailRegisterForm = await superValidate(request, zod(registerEmailDto));
 		if (!emailRegisterForm.valid) return fail(StatusCodes.BAD_REQUEST, { emailRegisterForm });

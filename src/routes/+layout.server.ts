@@ -1,6 +1,8 @@
-export const load = async ({ locals }) => {
-  const authedUser = await locals.getAuthedUser();
-  return {
-    authedUser
-  }
-}
+import { type ServerLoad } from '@sveltejs/kit';
+
+export const load: ServerLoad = async ({ locals }) => {
+	const authedUser = await locals.getAuthedUser();
+	return {
+		authedUser
+	};
+};

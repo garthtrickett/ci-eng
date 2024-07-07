@@ -1,6 +1,7 @@
 import type { ClientResponse } from 'hono/client';
 import type { ApiRoutes } from '$lib/server/api/index';
 import { hc } from 'hono/client';
+const origin = import.meta.env.VITE_ORIGIN;
 
 export const rpc = hc<ApiRoutes>('/');
 
@@ -27,3 +28,10 @@ export async function parseApiResponse<T>(response: ClientResponse<T>) {
 	}
 	return { data: null, error, response };
 }
+
+export const makeClient = (fetch: Window['fetch']) => {
+	const client = hc<ApiRoutes>(origin, { fetch });
+	return client;
+};
+
+export type BrowserClient = ReturnType<typeof makeClient>;

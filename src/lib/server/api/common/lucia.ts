@@ -1,7 +1,6 @@
 import { Lucia } from 'lucia';
 import { DrizzlePostgreSQLAdapter } from '@lucia-auth/adapter-drizzle';
-import { Discord } from 'arctic';
-import { config } from './config';
+import { config } from '$lib/config';
 import { sessionsTable } from '../infrastructure/database/tables/sessions.table';
 
 import { db } from '../infrastructure/database';

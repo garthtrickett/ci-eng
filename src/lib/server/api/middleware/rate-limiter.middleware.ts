@@ -2,7 +2,7 @@ import { rateLimiter } from 'hono-rate-limiter';
 import { RedisStore } from 'rate-limit-redis';
 import RedisClient from 'ioredis';
 import type { HonoTypes } from '../types';
-import { config } from '../common/config';
+import { config } from '$lib/config';
 
 const client = new RedisClient(config.REDIS_URL);
 
