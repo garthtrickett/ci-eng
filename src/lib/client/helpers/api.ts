@@ -35,3 +35,10 @@ export const makeClient = (fetch: Window['fetch']) => {
 };
 
 export type BrowserClient = ReturnType<typeof makeClient>;
+
+export async function withClient<T>(request: (c: BrowserClient) => Promise<ClientResponse<T>>) {
+	const client = makeClient(fetch);
+	const res = await request(client);
+	const { data } = await parseApiResponse(res);
+	return data;
+}

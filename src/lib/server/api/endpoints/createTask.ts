@@ -15,7 +15,6 @@ const app = new Hono().put('/', zValidator('json', createTaskDto), async (c) => 
 		done: false
 	};
 	const newTask = await db.insert(tasksTable).values(task).returning();
-	console.log(newTask);
 	return c.json(newTask);
 });
 
