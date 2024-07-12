@@ -3,7 +3,16 @@ import { generateRandomString } from '../common/generateRandomString';
 const app = new Hono();
 
 // Authorization endpoint
-app.get('/', async (c) => {
+app.get('/authorize', async (c) => {
+	// The authorization server presents the user with a login form where they can enter their username and password.
+	// This form is served over a secure connection and is hosted by the authorization server, not your application, to ensure the user’s credentials are kept
+	// confidential.
+	// If the user enters valid credentials, the authorization server will
+	// then ask the user to grant your application access to the scopes it requested.
+	// The user has the option to grant or deny these permissions.
+
+	// this endpoint needs to be a page then my auth/callback page needs to send server side client secret etc to the token endpoint
+
 	const clientId = c.req.query('client_id');
 	const redirectUri = c.req.query('redirect_uri');
 	const responseType = c.req.query('response_type');
@@ -35,7 +44,7 @@ app.post('/token', async (c) => {
 		access_token: generateRandomString(32),
 		id_token: generateRandomString(32),
 		token_type: 'Bearer',
-		expires_in: 3600
+		expires_in: 60 * 60
 	});
 });
 

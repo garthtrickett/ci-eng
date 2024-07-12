@@ -10,8 +10,20 @@
 	import { registerEmailDto } from '$lib/dtos/register-email.dto';
 	import { signInEmailDto } from '$lib/dtos/signin-email.dto';
 	import PinInput from '$lib/client/components/pin-input.svelte';
+	import { page } from '$app/stores';
 
 	const { data } = $props();
+
+	const clientId = $page.url.searchParams.get('client_id');
+	const redirect_uri = $page.url.searchParams.get('redirect_uri');
+	const responseType = $page.url.searchParams.get('response_type');
+	const scope = $page.url.searchParams.get('scope');
+	const oidcState = $page.url.searchParams.get('state');
+
+	// TODO:
+	// Need to change this form to submit a username and password and then change the lucia that authenticates the user
+
+	// return c.redirect(`${redirectUri}?code=${code}&state=${state}`);
 
 	let showTokenVerification = $state(false);
 
@@ -65,6 +77,19 @@
 					type="email"
 					placeholder="you@awesome.com"
 					bind:value={$emailRegisterFormData.email}
+				/>
+			</Form.Control>
+			<Form.Description />
+			<Form.FieldErrors />
+		</Form.Field>
+		<Form.Field form={emailRegisterForm} name="password">
+			<Form.Control let:attrs>
+				<Form.Label>Password</Form.Label>
+				<Input
+					{...attrs}
+					type="password"
+					placeholder="Your password"
+					bind:value={$emailRegisterFormData.password}
 				/>
 			</Form.Control>
 			<Form.Description />
