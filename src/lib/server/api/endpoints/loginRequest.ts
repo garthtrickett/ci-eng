@@ -23,7 +23,7 @@ const app = new Hono().post('/', zValidator('json', registerEmailDto), async (c)
 
 	await create({ email: email, hashedToken, expiresAt: expiry });
 
-	await sendLoginRequest({
+	await sendLoginRequestEmail({
 		to: email,
 		props: { token: token }
 	});
@@ -45,7 +45,7 @@ async function create(data: CreateLoginRequest) {
 		.then(takeFirstOrThrow);
 }
 
-function sendLoginRequest(data: SendTemplate<{ token: string }>) {
+function sendLoginRequestEmail(data: SendTemplate<{ token: string }>) {
 	const template = handlebars.compile(getTemplate('email-verification-token'));
 	return send({
 		to: data.to,

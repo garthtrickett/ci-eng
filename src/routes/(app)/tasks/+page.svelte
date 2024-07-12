@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { createQuery } from '@tanstack/svelte-query';
 
-	import { fetchTasks } from './fetchTasks';
+	import { withClient } from '$lib/client/helpers/api';
 
 	const query = createQuery({
-		queryKey: ['todos'],
-		queryFn: () => fetchTasks()
+		queryKey: ['tasksGet'],
+		queryFn: () => withClient((c) => c.api.tasks.$get())
 	});
 </script>
 

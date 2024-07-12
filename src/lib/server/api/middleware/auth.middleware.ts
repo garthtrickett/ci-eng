@@ -50,3 +50,19 @@ export const requireAuth: MiddlewareHandler<{
 	if (!user) throw Unauthorized('You must be logged in to access this resource');
 	return next();
 });
+
+export const OAuth2ProviderMiddleware: MiddlewareHandler<HonoTypes> = createMiddleware(
+	async (c, next) => {
+		// Extract the authorization code from the request
+		const authorizationCode = c.req.query('key');
+
+		// If there's no authorization code, initiate the OAuth2 flow
+		if (!authorizationCode) {
+			// Redirect the user to the OAuth2 provider's authorization endpoint
+			// with the necessary parameters (like client_id, redirect_uri, response_type, scope, and state)
+			return c.redirect('/');
+		}
+
+		return next();
+	}
+);

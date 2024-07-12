@@ -1,6 +1,10 @@
 import 'reflect-metadata';
 import { Hono } from 'hono';
-import { validateAuthSession, verifyOrigin } from './middleware/auth.middleware';
+import {
+	validateAuthSession,
+	verifyOrigin,
+	OAuth2ProviderMiddleware
+} from './middleware/auth.middleware';
 
 import createTask from './endpoints/createTask';
 import deleteTask from './endpoints/deleteTask';
@@ -15,6 +19,8 @@ import loginVerification from './endpoints/loginVerification';
 import logout from './endpoints/logout';
 import emailUpdate from './endpoints/emailUpdate';
 import emailVerification from './endpoints/emailVerification';
+import oidcAuthorize from './endpoints/oidcAuthorize';
+import createAuthState from './endpoints/createAuthState';
 
 /* ----------------------------------- Api ---------------------------------- */
 
@@ -37,6 +43,8 @@ const routes = app
 	.route('/email/verification', emailVerification)
 
 	.route('/user', getAuthedUser)
+	.route('/oauth2', oidcAuthorize)
+	.route('/createauthstate', createAuthState)
 
 	.route('/login/request', loginRequest)
 	.route('/login/verification', loginVerification)
