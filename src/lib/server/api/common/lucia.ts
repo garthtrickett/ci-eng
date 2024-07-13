@@ -26,6 +26,8 @@ export const lucia = new Lucia(adapter, {
 interface DatabaseUserAttributes {
 	id: string;
 	email: string;
+	username: string;
+	password: string;
 	avatar: string | null;
 	verified: boolean;
 }

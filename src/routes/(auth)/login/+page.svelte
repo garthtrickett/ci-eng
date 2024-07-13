@@ -7,8 +7,8 @@
 	import * as Form from '$lib/client/components/ui/form';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
-	import { registerEmailDto } from '$lib/dtos/register-email.dto';
-	import { signInEmailDto } from '$lib/dtos/signin-email.dto';
+	import { signInUsernameDto } from '$lib/dtos/signin-username.dto';
+
 	import PinInput from '$lib/client/components/pin-input.svelte';
 	import { page } from '$app/stores';
 
@@ -21,44 +21,35 @@
 	const oidcState = $page.url.searchParams.get('state');
 
 	// TODO:
+	// need to check the format of usernames in YSP (what if there are users with same first and last name but different companies)
 	// Need to change this form to submit a username and password and then change the lucia that authenticates the user
 
 	// return c.redirect(`${redirectUri}?code=${code}&state=${state}`);
 
-	let showTokenVerification = $state(false);
-
-	const emailRegisterForm = superForm(data.emailRegisterForm, {
-		validators: zodClient(registerEmailDto),
+	const usernameSignInForm = superForm(data.usernameSignInForm, {
+		validators: zodClient(signInUsernameDto),
 		resetForm: false,
 		onUpdated: ({ form }) => {
 			if (form.valid) {
-				showTokenVerification = true;
-				$emailSigninFormData.email = form.data.email;
+				$usernameSignInFormData.username = form.data.username;
+				$usernameSignInFormData.username = form.data.password;
 			}
 		}
 	});
 
-	const emailSigninForm = superForm(data.emailSigninForm, {
-		validators: zodClient(signInEmailDto),
-		resetForm: false
-	});
-
-	const { form: emailRegisterFormData, enhance: emailRegisterEnhance } = emailRegisterForm;
-	const { form: emailSigninFormData, enhance: emailSigninEnhance } = emailSigninForm;
+	const { form: usernameSignInFormData, enhance: usernameSignInEnhance } = usernameSignInForm;
 </script>
 
 <Card.Root class="mx-auto mt-24 max-w-sm">
 	<Card.Header>
 		<Card.Title class="text-2xl">Login</Card.Title>
-		<Card.Description>Enter your email below to login to your account</Card.Description>
+		<Card.Description
+			>Enter your username and password below to login to your account</Card.Description
+		>
 	</Card.Header>
 	<Card.Content>
 		<div class="grid gap-4">
-			{#if showTokenVerification}
-				{@render tokenForm()}
-			{:else}
-				{@render emailForm()}
-			{/if}
+			{@render usernameForm()}
 			<!-- <Button variant="outline" class="w-full">Login with Discord</Button> -->
 		</div>
 		<div class="mt-4 text-center text-sm">
@@ -67,49 +58,29 @@
 	</Card.Content>
 </Card.Root>
 
-{#snippet emailForm()}
-	<form method="POST" action="?/register" use:emailRegisterEnhance class="grid gap-4">
-		<Form.Field form={emailRegisterForm} name="email">
+{#snippet usernameForm()}
+	<form method="POST" action="?/signin" use:usernameSignInEnhance class="grid gap-4">
+		<Form.Field form={usernameSignInForm} name="username">
 			<Form.Control let:attrs>
-				<Form.Label>Email</Form.Label>
+				<Form.Label>Username</Form.Label>
 				<Input
 					{...attrs}
-					type="email"
-					placeholder="you@awesome.com"
-					bind:value={$emailRegisterFormData.email}
+					type="username"
+					placeholder="don.ridges"
+					bind:value={$usernameSignInFormData.username}
 				/>
-			</Form.Control>
-			<Form.Description />
-			<Form.FieldErrors />
-		</Form.Field>
-		<Form.Field form={emailRegisterForm} name="password">
-			<Form.Control let:attrs>
+
 				<Form.Label>Password</Form.Label>
 				<Input
 					{...attrs}
 					type="password"
-					placeholder="Your password"
-					bind:value={$emailRegisterFormData.password}
+					placeholder="super-safe-password"
+					bind:value={$usernameSignInFormData.password}
 				/>
 			</Form.Control>
 			<Form.Description />
 			<Form.FieldErrors />
 		</Form.Field>
-		<Button type="submit" class="w-full">Continue with Email</Button>
-	</form>
-{/snippet}
-
-{#snippet tokenForm()}
-	<form method="POST" action="?/signin" use:emailSigninEnhance class="space-y-4">
-		<input hidden value={$emailSigninFormData.email} name="email" />
-		<Form.Field form={emailSigninForm} name="token">
-			<Form.Control let:attrs>
-				<Form.Label />
-				<PinInput class="justify-evenly" {...attrs} bind:value={$emailSigninFormData.token} />
-			</Form.Control>
-			<Form.Description />
-			<Form.FieldErrors />
-		</Form.Field>
-		<Button class="w-full" type="submit">Submit</Button>
+		<Button type="submit" class="w-full">Sign In</Button>
 	</form>
 {/snippet}

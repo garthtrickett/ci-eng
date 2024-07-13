@@ -17,6 +17,7 @@ export const load: ServerLoad = async () => {
 export const actions: Actions = {
 	register: async ({ locals, request }) => {
 		const emailRegisterForm = await superValidate(request, zod(registerEmailDto));
+
 		if (!emailRegisterForm.valid) return fail(StatusCodes.BAD_REQUEST, { emailRegisterForm });
 		const { error } = await locals.api.login.request
 			.$post({ json: emailRegisterForm.data })
