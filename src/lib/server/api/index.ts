@@ -1,10 +1,6 @@
 import 'reflect-metadata';
 import { Hono } from 'hono';
-import {
-	validateAuthSession,
-	verifyOrigin,
-	OAuth2ProviderMiddleware
-} from './middleware/auth.middleware';
+import { validateAuthSession, verifyOrigin } from './middleware/auth.middleware';
 
 import createTask from './endpoints/createTask';
 import deleteTask from './endpoints/deleteTask';

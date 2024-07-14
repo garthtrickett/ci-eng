@@ -8,22 +8,30 @@ import { type ServerLoad } from '@sveltejs/kit';
 import { type Actions } from '@sveltejs/kit';
 
 export const load: ServerLoad = async () => {
-	return {
-		usernameSignInForm: await superValidate(zod(signInUsernameDto))
-	};
+	const usernameSignInForm = await superValidate(zod(signInUsernameDto));
+	return { usernameSignInForm };
 };
 
 export const actions: Actions = {
 	signin: async ({ locals, request }) => {
 		const usernameSignInForm = await superValidate(request, zod(signInUsernameDto));
 		if (!usernameSignInForm.valid) return fail(StatusCodes.BAD_REQUEST, { usernameSignInForm });
-		const { error } = await locals.api.login.request
+		const { error } = await locals.api.oauth2.authorize
 			.$post({ json: usernameSignInForm.data })
 			.then(locals.parseApiResponse);
+
+		console.log(error);
 		if (error) {
 			const errorReturn = setError(usernameSignInForm, 'username', 'No idea why this works');
-
 			return { status: errorReturn.status, form: usernameSignInForm };
 		}
 	}
 };
+
+async function authorize(data) {
+	// Validate the client_id, redirect_uri, response_type, and scope
+	// ...
+
+	const code = generateRandomString(16);
+	return { code, state: data.state };
+}

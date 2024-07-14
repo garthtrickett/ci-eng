@@ -15,7 +15,7 @@
 
 	let showTokenVerification = $state(false);
 
-	const emailRegisterForm = superForm(data.emailRegisterForm, {
+	const { emailRegisterForm } = superForm(data.emailRegisterForm, {
 		validators: zodClient(registerEmailDto),
 		resetForm: false,
 		onUpdated: ({ form }) => {

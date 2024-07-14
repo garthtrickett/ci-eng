@@ -11,6 +11,8 @@ export const usersTable = pgTable('users', {
 	id: text('id')
 		.primaryKey()
 		.$defaultFn(() => createId()),
+	username: text('username').notNull().unique(),
+	password_hash: text('password_hash').notNull(),
 	avatar: text('avatar'),
 	email: citext('email').notNull().unique(),
 	verified: boolean('verified').notNull().default(false),

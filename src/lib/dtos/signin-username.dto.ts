@@ -20,7 +20,12 @@ ensure that the correct data is being passed around.
 
 export const signInUsernameDto = z.object({
 	username: z.string(),
-	password: z.string()
+	password: z.string(),
+	clientId: z.string(),
+	redirectUri: z.string(),
+	responseType: z.string(),
+	scope: z.string(),
+	state: z.string()
 });
-
-export type SignInUserneDto = z.infer<typeof signInUsernameDto>;
+export type SignInUsernameDto = z.infer<typeof signInUsernameDto>;
+export type SignInUsernameSchema = typeof signInUsernameDto;
