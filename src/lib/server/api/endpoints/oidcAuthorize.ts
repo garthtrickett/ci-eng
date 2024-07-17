@@ -162,8 +162,8 @@ const app = new Hono()
 			.sign(secret);
 
 		// these don't work
-		// jose.jwtDecrypt(idToken, secret);
-		// jose.jwtDecrypt(accessToken, secret);
+		jose.jwtVerify(idToken, secret);
+		jose.jwtVerify(accessToken, secret);
 
 		// how does the client use the id_token to allow the user to be logged into the client app
 
