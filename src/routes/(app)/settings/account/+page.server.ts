@@ -4,9 +4,11 @@ import { updateEmailDto } from '$lib/dtos/update-email.dto';
 import { verifyEmailDto } from '$lib/dtos/verify-email.dto';
 import { fail, setError, superValidate } from 'sveltekit-superforms';
 import { StatusCodes } from '$lib/constants/status-codes.js';
-import { type PageServerLoad, type Actions } from '../$types';
 
-export let load: PageServerLoad = async (event) => {
+import { type ServerLoad } from '@sveltejs/kit';
+import { type Actions } from '@sveltejs/kit';
+
+export let load: ServerLoad = async (event) => {
 	const authedUser = await event.locals.getAuthedUserOrThrow();
 
 	return {

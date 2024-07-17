@@ -24,7 +24,9 @@ const app = new Hono().basePath('/api');
 
 /* --------------------------- Global Middlewares --------------------------- */
 
-app.use(verifyOrigin).use(validateAuthSession);
+// app.use(verifyOrigin).use(validateAuthSession);
+// temporarily disabled verifyOrigin
+app.use(validateAuthSession);
 
 /* --------------------------------- Routes --------------------------------- */
 

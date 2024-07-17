@@ -53,7 +53,13 @@
 			state: oidcState || ''
 		};
 
-		await withClient((c) => c.api.oauth2.authorize.$post({ json: formData }));
+		const response = await withClient((c) => c.api.oauth2.authorize.$post({ json: formData }));
+
+		if (response) {
+			if (typeof window !== 'undefined') {
+				window.location.href = response.redirectUrl;
+			}
+		}
 	}
 </script>
 

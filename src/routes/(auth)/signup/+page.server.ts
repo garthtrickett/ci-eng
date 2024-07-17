@@ -1,7 +1,7 @@
 import { lucia } from '$lib/server/api/common/lucia';
 import { fail, redirect } from '@sveltejs/kit';
 import { generateIdFromEntropySize } from 'lucia';
-import { sha256 } from '@noble/hashes/sha2'; // Import sha256 from @noble/hashes
+import { sha256 } from '@noble/hashes/sha2';
 import { db } from '$lib/server/api/infrastructure/database';
 import { usersTable } from '$lib/server/api/infrastructure/database/tables';
 import { type CreateUser } from '$lib/server/api/infrastructure/database/tables';

@@ -31,6 +31,7 @@ export async function parseApiResponse<T>(response: ClientResponse<T>) {
 
 export const makeClient = (fetch: Window['fetch']) => {
 	const client = hc<ApiRoutes>(origin, { fetch });
+
 	return client;
 };
 

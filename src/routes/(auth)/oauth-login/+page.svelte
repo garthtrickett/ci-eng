@@ -1,7 +1,6 @@
 <script lang="ts">
-	let clientId = '06A5FE46E6B3CDA0B06CD02BA4457A08';
-	let redirectUri = 'http://localhost:5713/login';
-
+	const clientId = import.meta.env.VITE_CLIENT_ID;
+	const redirectUri = import.meta.env.VITE_REDIRECT_URI;
 	import { onMount } from 'svelte';
 	import { withClient } from '$lib/client/helpers/api';
 
@@ -13,7 +12,7 @@
 		if (data && data.state) {
 			state = data.state;
 		}
-		href = `/login?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=email&state=${state}`;
+		href = `/login?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=openid%20username&state=${state}`;
 	});
 
 	// Generate a random state

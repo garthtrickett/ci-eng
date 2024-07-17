@@ -2,6 +2,7 @@ import { relations } from 'drizzle-orm';
 import { citext, timestamps } from '../utils';
 import { createId } from '@paralleldrive/cuid2';
 import { sessionsTable } from './sessions.table';
+import { authCodesTable } from './authCodes.table';
 import { boolean, pgTable, text } from 'drizzle-orm/pg-core';
 import { emailVerificationsTable } from './email-verifications.table';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
@@ -21,6 +22,7 @@ export const usersTable = pgTable('users', {
 
 export const usersRelations = relations(usersTable, ({ many, one }) => ({
 	sessions: many(sessionsTable),
+	authcodes: many(authCodesTable),
 	emailVerifications: one(emailVerificationsTable, {
 		fields: [usersTable.id],
 		references: [emailVerificationsTable.userId]

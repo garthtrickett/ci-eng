@@ -20,18 +20,9 @@ export const actions: Actions = {
 			.$post({ json: usernameSignInForm.data })
 			.then(locals.parseApiResponse);
 
-		console.log(error);
 		if (error) {
 			const errorReturn = setError(usernameSignInForm, 'username', 'No idea why this works');
 			return { status: errorReturn.status, form: usernameSignInForm };
 		}
 	}
 };
-
-async function authorize(data) {
-	// Validate the client_id, redirect_uri, response_type, and scope
-	// ...
-
-	const code = generateRandomString(16);
-	return { code, state: data.state };
-}

@@ -3,6 +3,7 @@
 
 	import { withClient } from '$lib/client/helpers/api';
 
+	withClient((c) => c.api.tasks.$put({ json: { name: 'new' } }));
 	const query = createQuery({
 		queryKey: ['tasksGet'],
 		queryFn: () => withClient((c) => c.api.tasks.$get())
