@@ -7,10 +7,3 @@ export const load: ServerLoad = async ({ locals }) => {
 
 	return { user: user };
 };
-
-export const actions: Actions = {
-	logout: async ({ locals }) => {
-		await locals.api.logout.$post();
-		redirect(StatusCodes.SEE_OTHER, '/register');
-	}
-};

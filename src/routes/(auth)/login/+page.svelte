@@ -36,31 +36,22 @@
 
 				$usernameSignInFormData = { ...$usernameSignInFormData, ...formData };
 			}
+		},
+		onResult: ({ result }) => {
+			if (result.type === 'success' && result.data) {
+				const data = result.data;
+				if (data.redirectUrl) {
+					window.location.href = data.redirectUrl;
+				} else {
+					console.error(data.error || 'An unexpected error occurred');
+				}
+			} else {
+				console.error('An unexpected error occurred');
+			}
 		}
 	});
 
-	const { form: usernameSignInFormData, enhance: usernameSignInEnhance } = usernameSignInForm;
-
-	async function handleSubmit(event: Event) {
-		event.preventDefault();
-		const formData = {
-			username: $usernameSignInFormData.username,
-			password: $usernameSignInFormData.password,
-			clientId: clientId || '',
-			redirectUri: redirectUri || '',
-			responseType: responseType || '',
-			scope: scope || '',
-			state: oidcState || ''
-		};
-
-		const response = await withClient((c) => c.api.oauth2.authorize.$post({ json: formData }));
-
-		if (response) {
-			if (typeof window !== 'undefined') {
-				window.location.href = response.redirectUrl;
-			}
-		}
-	}
+	const { form: usernameSignInFormData, enhance: signInUsenameEnhance } = usernameSignInForm;
 </script>
 
 <Card.Root class="mx-auto mt-24 max-w-sm">
@@ -82,7 +73,7 @@
 </Card.Root>
 
 {#snippet usernameForm()}
-	<form method="POST" use:usernameSignInEnhance class="grid gap-4" onsubmit={handleSubmit}>
+	<form method="POST" action="?/signin" use:signInUsenameEnhance class="grid gap-4">
 		<Form.Field form={usernameSignInForm} name="username">
 			<Form.Control let:attrs>
 				<Form.Label>Username</Form.Label>
@@ -111,6 +102,11 @@
 			<Form.FieldErrors />
 		</Form.Field>
 
+		<input type="hidden" name="clientId" value={clientId || ''} />
+		<input type="hidden" name="redirectUri" value={redirectUri || ''} />
+		<input type="hidden" name="responseType" value={responseType || ''} />
+		<input type="hidden" name="scope" value={scope || ''} />
+		<input type="hidden" name="state" value={oidcState || ''} />
 		<Button type="submit" class="w-full">Sign In</Button>
 	</form>
 {/snippet}

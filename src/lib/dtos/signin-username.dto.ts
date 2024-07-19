@@ -19,8 +19,12 @@ ensure that the correct data is being passed around.
 /* -------------------------------------------------------------------------- */
 
 export const signInUsernameDto = z.object({
-	username: z.string(),
-	password: z.string(),
+	username: z
+		.string()
+		.min(3)
+		.max(31)
+		.regex(/^[a-z0-9_.-]+$/i),
+	password: z.string().min(6).max(255),
 	clientId: z.string(),
 	redirectUri: z.string(),
 	responseType: z.string(),

@@ -7,7 +7,12 @@ export default {
 	strict: true,
 	dialect: 'postgresql',
 	dbCredentials: {
-		url: process.env.DATABASE_URL!
+		host: String(process.env.PGHOST),
+		database: String(process.env.PGDATABASE),
+		user: String(process.env.PGUSER),
+		password: String(process.env.PGPASSWORD),
+		port: 5432,
+		ssl: true
 	},
 	migrations: {
 		table: 'migrations',

@@ -41,7 +41,6 @@ export async function send({ to, subject, html }: SendMail) {
 			html
 		})
 		.then((info) => {
-			console.log('hello');
 			console.log(nodemailer.getTestMessageUrl(info));
 		})
 		.catch((error) => {

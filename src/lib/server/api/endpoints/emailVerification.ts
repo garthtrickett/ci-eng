@@ -57,7 +57,6 @@ async function findAndBurnEmailVerificationToken(userId: string, token: string) 
 			.then(takeFirst);
 
 		if (!emailVerificationRecord) {
-			console.log('No email verification record found for user');
 			return null;
 		}
 		// check if the token is valid

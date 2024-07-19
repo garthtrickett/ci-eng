@@ -12,6 +12,7 @@
 		if (data && data.state) {
 			state = data.state;
 		}
+
 		href = `/login?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=openid%20username&state=${state}`;
 	});
 

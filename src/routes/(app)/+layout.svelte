@@ -10,7 +10,7 @@
 	import { cn } from '$lib/client/helpers/ui';
 	import HouseIcon from 'lucide-svelte/icons/house';
 	import { page } from '$app/stores';
-	import { enhance } from '$app/forms';
+	import { withClient } from '$lib/client/helpers/api';
 
 	let { children, data } = $props();
 
@@ -24,6 +24,29 @@
 			label: 'Docs'
 		}
 	];
+
+	async function handleLogout(event: Event) {
+		event.preventDefault(); // Prevent the default form submission
+
+		// Add your logout logic here
+		try {
+			const response = await withClient((c) => c.api.logout.$post());
+
+			if (!response) {
+				console.error('No response');
+			}
+
+			if (response && response.status == 'success') {
+				// Handle successful logout (e.g., redirect to login page)
+				window.location.href = '/';
+			} else {
+				// Handle errors (e.g., show error message)
+				console.error('Logout failed');
+			}
+		} catch (error) {
+			console.error('Unexpected error during logout:', error);
+		}
+	}
 </script>
 
 <div class="flex min-h-screen w-full flex-col">
@@ -112,10 +135,10 @@
 			<DropdownMenu.Item href="/settings">Settings</DropdownMenu.Item>
 			<DropdownMenu.Separator />
 			<DropdownMenu.Item>
-				<form action="/?/logout" method="POST" use:enhance class="w-full">
+				<form method="POST" on:submit={handleLogout} class="w-full">
 					<button class="w-full cursor-default text-start" type="submit">Logout</button>
-				</form></DropdownMenu.Item
-			>
+				</form>
+			</DropdownMenu.Item>
 		</DropdownMenu.Content>
 	</DropdownMenu.Root>
 {/snippet}

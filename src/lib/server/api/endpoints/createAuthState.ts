@@ -16,8 +16,6 @@ const app = new Hono().get('/', async (c) => {
 		maxAge: 60 * 60
 	});
 
-	console.log('state1', state);
-
 	return c.json({ state });
 });
 

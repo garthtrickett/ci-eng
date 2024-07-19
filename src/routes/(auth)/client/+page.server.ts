@@ -17,11 +17,6 @@ const tokenRequestSchema = z.object({
 
 type TokenRequestData = z.infer<typeof tokenRequestSchema>;
 
-const callbackDto = z.object({
-	code: z.string(),
-	state: z.string()
-});
-
 export const load: ServerLoad = async (event) => {
 	// event.locals.api;
 
@@ -30,8 +25,6 @@ export const load: ServerLoad = async (event) => {
 	const code = event.url.searchParams.get('code');
 	const oidcState = event.url.searchParams.get('state');
 	// const usernameSignInForm = await superValidate(zod(signInUsernameDto));
-	console.log(code);
-	console.log(oidcState);
 
 	if (oidcState === stateFromCookie) {
 		// TODO: Validate the grant_type, code, redirect_uri, client_id, and client_secret
@@ -48,7 +41,6 @@ export const load: ServerLoad = async (event) => {
 			const data = await event.locals.api.oauth2.token.provider.final
 				.$post({ json: tokenRequestData })
 				.then(event.locals.parseApiResponse);
-			console.log(data);
 		}
 	} // return { usernameSignInForm };
 };
