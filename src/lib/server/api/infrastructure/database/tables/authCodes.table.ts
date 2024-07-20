@@ -15,6 +15,7 @@ export const authCodesTable = pgTable('auth_codes', {
 		.notNull()
 		.references(() => usersTable.id),
 	code: text('code').notNull(),
+	nonce: text('nonce').notNull(),
 	...timestamps
 });
 

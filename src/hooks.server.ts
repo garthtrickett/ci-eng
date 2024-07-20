@@ -16,6 +16,10 @@ const apiClient: Handle = async ({ event, resolve }) => {
 		}
 	});
 
+	/* ----------------------------- Logging Request ---------------------------- */
+	console.log('Request Method:', event.request.method);
+	console.log('Request URL:', event.request.url);
+
 	/* ----------------------------- Auth functions ----------------------------- */
 	async function getAuthedUser() {
 		const { data } = await api.user.$get().then(parseApiResponse);

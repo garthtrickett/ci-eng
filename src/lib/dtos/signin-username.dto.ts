@@ -29,7 +29,8 @@ export const signInUsernameDto = z.object({
 	redirectUri: z.string(),
 	responseType: z.string(),
 	scope: z.string(),
-	state: z.string()
+	state: z.string(),
+	nonce: z.string()
 });
 export type SignInUsernameDto = z.infer<typeof signInUsernameDto>;
 export type SignInUsernameSchema = typeof signInUsernameDto;

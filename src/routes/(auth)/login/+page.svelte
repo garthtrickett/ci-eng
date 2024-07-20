@@ -18,6 +18,7 @@
 	const responseType = $page.url.searchParams.get('response_type');
 	const scope = $page.url.searchParams.get('scope');
 	const oidcState = $page.url.searchParams.get('state');
+	const nonce = $page.url.searchParams.get('nonce');
 
 	const usernameSignInForm = superForm(data.usernameSignInForm, {
 		validators: zodClient(signInUsernameDto),
@@ -31,7 +32,8 @@
 					redirectUri: redirectUri || '',
 					responseType: responseType || '',
 					scope: scope || '',
-					state: oidcState || ''
+					state: oidcState || '',
+					nonce: nonce || ''
 				};
 
 				$usernameSignInFormData = { ...$usernameSignInFormData, ...formData };
@@ -107,6 +109,7 @@
 		<input type="hidden" name="responseType" value={responseType || ''} />
 		<input type="hidden" name="scope" value={scope || ''} />
 		<input type="hidden" name="state" value={oidcState || ''} />
+		<input type="hidden" name="nonce" value={nonce || ''} />
 		<Button type="submit" class="w-full">Sign In</Button>
 	</form>
 {/snippet}

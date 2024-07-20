@@ -9,6 +9,7 @@ import undoFinishTask from './endpoints/undoFinishTask';
 import getTasks from './endpoints/getTasks';
 
 import getAuthedUser from './endpoints/getAuthedUser';
+import { cors } from 'hono/cors';
 
 import loginRequest from './endpoints/loginRequest';
 import loginVerification from './endpoints/loginVerification';
@@ -17,6 +18,7 @@ import emailUpdate from './endpoints/emailUpdate';
 import emailVerification from './endpoints/emailVerification';
 import oidcAuthorize from './endpoints/oidcAuthorize';
 import createAuthState from './endpoints/createAuthState';
+import { logger } from 'hono/logger';
 
 /* ----------------------------------- Api ---------------------------------- */
 
@@ -27,6 +29,23 @@ const app = new Hono().basePath('/api');
 // app.use(verifyOrigin).use(validateAuthSession);
 // temporarily disabled verifyOrigin
 app.use(validateAuthSession);
+app.use(logger());
+
+app.use(
+	'/*',
+	cors({
+		origin: [
+			'http://localhost:5173',
+			'http://localhost:80',
+			'http://host.docker.internal:80',
+			'http://host.docker.internal:5173'
+		], // Replace with your allowed domains
+
+		allowMethods: ['POST'],
+		allowHeaders: ['Content-Type']
+		// credentials: true, // If you need to send cookies or HTTP authentication
+	})
+);
 
 /* --------------------------------- Routes --------------------------------- */
 

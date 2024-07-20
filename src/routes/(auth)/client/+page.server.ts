@@ -37,10 +37,16 @@ export const load: ServerLoad = async (event) => {
 				client_id: VITE_CLIENT_ID,
 				client_secret: CLIENT_SECRET
 			};
+			const urlEncodedData = new URLSearchParams(tokenRequestData);
 
-			const data = await event.locals.api.oauth2.token.provider.final
-				.$post({ json: tokenRequestData })
+			const data = await event.locals.api.oauth2.token
+				.$post({
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					},
+					body: urlEncodedData.toString()
+				})
 				.then(event.locals.parseApiResponse);
 		}
-	} // return { usernameSignInForm };
+	}
 };

@@ -27,7 +27,7 @@ export const actions: Actions = {
 		const usernameSignInForm = await superValidate(request, zod(signInUsernameDto));
 		if (!usernameSignInForm.valid) return fail(StatusCodes.BAD_REQUEST, { usernameSignInForm });
 
-		const { username, password, clientId, redirectUri, responseType, scope, state } =
+		const { username, password, clientId, redirectUri, responseType, scope, state, nonce } =
 			usernameSignInForm.data;
 
 		const users = await db
@@ -59,7 +59,8 @@ export const actions: Actions = {
 
 		const newCode: CreateAuthCode = {
 			userId: user.id,
-			code: code
+			code,
+			nonce
 		};
 		await db.insert(authCodesTable).values(newCode);
 
