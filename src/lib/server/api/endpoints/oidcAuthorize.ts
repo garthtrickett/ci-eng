@@ -87,14 +87,6 @@ const app = new Hono().post('/token', zValidator('form', tokenRequestSchema), as
 		token_type: 'Bearer',
 		expires_in: 60 * 60
 	});
-
-	// 		Yes, you’re correct. The generateRandomString(32) function calls in your code are placeholders for generating the access_token and id_token. In a real-world OpenID Connect (OIDC) implementation, these tokens are not randomly generated strings. Instead, they are typically JWTs (JSON Web Tokens) that are digitally signed by the authorization server.
-
-	// The access_token is used to authorize API requests on behalf of the user. It usually contains scopes and permissions granted to the user.
-	// The id_token is used to authenticate the user and establish a user session in the client application. It contains claims about the authenticated user such as their ID, email, and other profile information.
-	// These tokens are encoded and can be decoded to reveal the information contained within them. They are also digitally signed to prevent tampering. So, in a complete implementation, you would replace these placeholders with functions that generate valid, signed JWTs according to the OIDC specification
-
-	// The id_token is the primary addition that OIDC brings to OAuth2. It provides the client with details about the user and their authentication status, which is not standard in OAuth2.
 });
 
 export default app;

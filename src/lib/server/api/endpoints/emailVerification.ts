@@ -2,13 +2,13 @@ import { verifyEmailDto } from '$lib/dtos/verify-email.dto';
 import { zValidator } from '@hono/zod-validator';
 import { and, eq, gte } from 'drizzle-orm';
 import { Hono } from 'hono';
-import { Scrypt } from 'oslo/password';
 import 'reflect-metadata';
 import { BadRequest } from '../common/errors';
 import { db } from '../infrastructure/database';
 import { emailVerificationsTable, usersTable } from '../infrastructure/database/tables';
 import { takeFirst, takeFirstOrThrow } from '../infrastructure/database/utils';
 import { requireAuth } from '../middleware/auth.middleware';
+import { verifyToken } from '../common/generateTokenWithExpiryAndHash';
 
 const app = new Hono().post('/', requireAuth, zValidator('json', verifyEmailDto), async (c) => {
 	const { token } = c.req.valid('json');
@@ -59,10 +59,8 @@ async function findAndBurnEmailVerificationToken(userId: string, token: string) 
 		if (!emailVerificationRecord) {
 			return null;
 		}
-		// check if the token is valid
-		const hasher = new Scrypt();
 
-		const isValidRecord = await hasher.verify(emailVerificationRecord.hashedToken, token);
+		const isValidRecord = await verifyToken(emailVerificationRecord.hashedToken, token);
 
 		if (!isValidRecord) return null;
 

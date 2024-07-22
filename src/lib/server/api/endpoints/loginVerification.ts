@@ -4,7 +4,6 @@ import { and, eq, gte } from 'drizzle-orm';
 import handlebars from 'handlebars';
 import { Hono } from 'hono';
 import { setCookie } from 'hono/cookie';
-import { Scrypt } from 'oslo/password';
 import 'reflect-metadata';
 import { BadRequest } from '../common/errors';
 import { lucia } from '../common/lucia';
@@ -14,6 +13,7 @@ import { loginRequestsTable } from '../infrastructure/database/tables';
 import { usersTable } from '../infrastructure/database/tables/users.table'; // Import your db instance
 import { takeFirst, takeFirstOrThrow } from '../infrastructure/database/utils';
 import { type SendTemplate } from '../types';
+import { verifyToken } from '../common/generateTokenWithExpiryAndHash';
 
 const app = new Hono().post('/', zValidator('json', signInEmailDto), async (c) => {
 	const { email, token } = c.req.valid('json');
@@ -62,8 +62,8 @@ async function fetchValidRequest(email: string, token: string) {
 			.then(takeFirst);
 		if (!loginRequest) return null;
 
-		const hasher = new Scrypt();
-		const isValidRequest = hasher.verify(loginRequest.hashedToken, token);
+		const isValidRequest = await verifyToken(loginRequest.hashedToken, token);
+
 		if (!isValidRequest) return null;
 		await trx.delete(loginRequestsTable).where(eq(loginRequestsTable.id, loginRequest.id));
 		return loginRequest;
